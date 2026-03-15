@@ -15,7 +15,7 @@ type Service struct {
 }
 
 // GetUser fetches information about the authenticated user
-// https://api.youneedabudget.com/v1#/User/getUser
+// https://api.ynab.com/v1#/User/getUser
 func (s *Service) GetUser() (*User, error) {
 	resModel := struct {
 		Data struct {

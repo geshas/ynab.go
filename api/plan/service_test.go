@@ -18,7 +18,7 @@ func TestService_GetPlans(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		url := "https://api.youneedabudget.com/v1/plans"
+		url := "https://api.ynab.com/v1/plans"
 		httpmock.RegisterResponder(http.MethodGet, url,
 			func(req *http.Request) (*http.Response, error) {
 				res := httpmock.NewStringResponse(200, `{
@@ -87,7 +87,7 @@ func TestService_GetPlans(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		url := "https://api.youneedabudget.com/v1/plans"
+		url := "https://api.ynab.com/v1/plans"
 		httpmock.RegisterResponder(http.MethodGet, url,
 			func(req *http.Request) (*http.Response, error) {
 				res := httpmock.NewStringResponse(200, `{
@@ -133,7 +133,7 @@ func TestService_GetPlans(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		url := "https://api.youneedabudget.com/v1/plans"
+		url := "https://api.ynab.com/v1/plans"
 		httpmock.RegisterResponder(http.MethodGet, url,
 			func(req *http.Request) (*http.Response, error) {
 				res := httpmock.NewStringResponse(200, `{
@@ -174,7 +174,7 @@ func TestService_GetPlan(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		url := "https://api.youneedabudget.com/v1/plans/aa248caa-eed7-4575-a990-717386438d2c"
+		url := "https://api.ynab.com/v1/plans/aa248caa-eed7-4575-a990-717386438d2c"
 		httpmock.RegisterResponder(http.MethodGet, url,
 			func(req *http.Request) (*http.Response, error) {
 				res := httpmock.NewStringResponse(200, `{
@@ -336,7 +336,7 @@ func TestService_GetPlan(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		url := "https://api.youneedabudget.com/v1/plans/aa248caa-eed7-4575-a990-717386438d2c"
+		url := "https://api.ynab.com/v1/plans/aa248caa-eed7-4575-a990-717386438d2c"
 		httpmock.RegisterResponder(http.MethodGet, url,
 			func(req *http.Request) (*http.Response, error) {
 				res := httpmock.NewStringResponse(200, `{
@@ -386,7 +386,7 @@ func TestService_GetPlan(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		url := "https://api.youneedabudget.com/v1/plans/aa248caa-eed7-4575-a990-717386438d2c"
+		url := "https://api.ynab.com/v1/plans/aa248caa-eed7-4575-a990-717386438d2c"
 		httpmock.RegisterResponder(http.MethodGet, url,
 			func(req *http.Request) (*http.Response, error) {
 				res := httpmock.NewStringResponse(200, `{
@@ -430,7 +430,7 @@ func TestService_GetLastUsedPlan(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	url := "https://api.youneedabudget.com/v1/plans/last-used"
+	url := "https://api.ynab.com/v1/plans/last-used"
 	httpmock.RegisterResponder(http.MethodGet, url,
 		func(req *http.Request) (*http.Response, error) {
 			res := httpmock.NewStringResponse(200, `{
@@ -483,7 +483,7 @@ func TestService_GetPlanSettings(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		url := "https://api.youneedabudget.com/v1/plans/aa248caa-eed7-4575-a990-717386438d2c/settings"
+		url := "https://api.ynab.com/v1/plans/aa248caa-eed7-4575-a990-717386438d2c/settings"
 		httpmock.RegisterResponder(http.MethodGet, url,
 			func(req *http.Request) (*http.Response, error) {
 				res := httpmock.NewStringResponse(200, `{
@@ -536,7 +536,7 @@ func TestService_GetPlanSettings(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		url := "https://api.youneedabudget.com/v1/plans/aa248caa-eed7-4575-a990-717386438d2c/settings"
+		url := "https://api.ynab.com/v1/plans/aa248caa-eed7-4575-a990-717386438d2c/settings"
 		httpmock.RegisterResponder(http.MethodGet, url,
 			func(req *http.Request) (*http.Response, error) {
 				res := httpmock.NewStringResponse(200, `{
@@ -584,7 +584,7 @@ func TestService_GetPlanSettings(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		url := "https://api.youneedabudget.com/v1/plans/aa248caa-eed7-4575-a990-717386438d2c/settings"
+		url := "https://api.ynab.com/v1/plans/aa248caa-eed7-4575-a990-717386438d2c/settings"
 		httpmock.RegisterResponder(http.MethodGet, url,
 			func(req *http.Request) (*http.Response, error) {
 				res := httpmock.NewStringResponse(200, `{
@@ -619,7 +619,7 @@ func TestService_GetPlansWithAccounts(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	url := "https://api.youneedabudget.com/v1/plans?include_accounts=true"
+	url := "https://api.ynab.com/v1/plans?include_accounts=true"
 	httpmock.RegisterResponder(http.MethodGet, url,
 		func(req *http.Request) (*http.Response, error) {
 			res := httpmock.NewStringResponse(200, `{

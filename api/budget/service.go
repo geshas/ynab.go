@@ -17,14 +17,14 @@ type Service struct {
 }
 
 // GetBudgets fetches the list of budgets of the logger in user
-// https://api.youneedabudget.com/v1#/Budgets/getBudgets
+// https://api.ynab.com/v1#/Budgets/getBudgets
 func (s *Service) GetBudgets() ([]*Summary, error) {
 	return s.GetBudgetsWithAccounts(false)
 }
 
 // GetBudgetsWithAccounts fetches the list of budgets of the logger in user
 // with optional account information included
-// https://api.youneedabudget.com/v1#/Budgets/getBudgets
+// https://api.ynab.com/v1#/Budgets/getBudgets
 func (s *Service) GetBudgetsWithAccounts(includeAccounts bool) ([]*Summary, error) {
 	resModel := struct {
 		Data struct {
@@ -45,7 +45,7 @@ func (s *Service) GetBudgetsWithAccounts(includeAccounts bool) ([]*Summary, erro
 
 // GetBudget fetches a single budget with all related entities,
 // effectively a full budget export with filtering capabilities
-// https://api.youneedabudget.com/v1#/Budgets/getBudgetById
+// https://api.ynab.com/v1#/Budgets/getBudgetById
 func (s *Service) GetBudget(budgetID string, f *api.Filter) (*Snapshot, error) {
 	resModel := struct {
 		Data struct {
@@ -71,14 +71,14 @@ func (s *Service) GetBudget(budgetID string, f *api.Filter) (*Snapshot, error) {
 
 // GetLastUsedBudget fetches the last used budget with all related
 // entities, effectively a full budget export with filtering capabilities
-// https://api.youneedabudget.com/v1#/Budgets/getBudgetById
+// https://api.ynab.com/v1#/Budgets/getBudgetById
 func (s *Service) GetLastUsedBudget(f *api.Filter) (*Snapshot, error) {
 	const lastUsedBudgetID = "last-used"
 	return s.GetBudget(lastUsedBudgetID, f)
 }
 
 // GetBudgetSettings fetches a budget settings
-// https://api.youneedabudget.com/v1#/Budgets/getBudgetSettingsById
+// https://api.ynab.com/v1#/Budgets/getBudgetSettingsById
 func (s *Service) GetBudgetSettings(budgetID string) (*Settings, error) {
 	resModel := struct {
 		Data struct {

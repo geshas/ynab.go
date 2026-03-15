@@ -17,7 +17,7 @@ type Service struct {
 }
 
 // GetMonths fetches the list of months from a budget
-// https://api.youneedabudget.com/v1#/Months/getBudgetMonths
+// https://api.ynab.com/v1#/Months/getBudgetMonths
 func (s *Service) GetMonths(budgetID string, f *api.Filter) (*SearchResultSnapshot, error) {
 	resModel := struct {
 		Data struct {
@@ -41,7 +41,7 @@ func (s *Service) GetMonths(budgetID string, f *api.Filter) (*SearchResultSnapsh
 }
 
 // GetMonth fetches a specific month from a budget
-// https://api.youneedabudget.com/v1#/Months/getBudgetMonth
+// https://api.ynab.com/v1#/Months/getBudgetMonth
 func (s *Service) GetMonth(budgetID string, month api.Date) (*Month, error) {
 	resModel := struct {
 		Data struct {

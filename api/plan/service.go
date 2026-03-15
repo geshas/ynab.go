@@ -17,14 +17,14 @@ type Service struct {
 }
 
 // GetPlans fetches the list of plans
-// https://api.youneedabudget.com/v1#/Plans/getPlans
+// https://api.ynab.com/v1#/Plans/getPlans
 func (s *Service) GetPlans() ([]*Summary, error) {
 	return s.GetPlansWithAccounts(false)
 }
 
 // GetPlansWithAccounts fetches the list of plans
 // with optional account information included
-// https://api.youneedabudget.com/v1#/Plans/getPlans
+// https://api.ynab.com/v1#/Plans/getPlans
 func (s *Service) GetPlansWithAccounts(includeAccounts bool) ([]*Summary, error) {
 	resModel := struct {
 		Data struct {
@@ -45,7 +45,7 @@ func (s *Service) GetPlansWithAccounts(includeAccounts bool) ([]*Summary, error)
 
 // GetPlan fetches a single plan with all related entities,
 // effectively a full plan export with filtering capabilities
-// https://api.youneedabudget.com/v1#/Plans/getPlanById
+// https://api.ynab.com/v1#/Plans/getPlanById
 func (s *Service) GetPlan(planID string, f *api.Filter) (*Snapshot, error) {
 	resModel := struct {
 		Data struct {
@@ -70,14 +70,14 @@ func (s *Service) GetPlan(planID string, f *api.Filter) (*Snapshot, error) {
 }
 
 // GetLastUsedPlan fetches the last used plan with all related entities
-// https://api.youneedabudget.com/v1#/Plans/getPlanById
+// https://api.ynab.com/v1#/Plans/getPlanById
 func (s *Service) GetLastUsedPlan(f *api.Filter) (*Snapshot, error) {
 	const lastUsedPlanID = "last-used"
 	return s.GetPlan(lastUsedPlanID, f)
 }
 
 // GetPlanSettings fetches a plan settings
-// https://api.youneedabudget.com/v1#/Plans/getPlanSettingsById
+// https://api.ynab.com/v1#/Plans/getPlanSettingsById
 func (s *Service) GetPlanSettings(planID string) (*Settings, error) {
 	resModel := struct {
 		Data struct {

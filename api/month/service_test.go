@@ -15,7 +15,7 @@ func TestService_GetMonths(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	url := "https://api.youneedabudget.com/v1/budgets/aa248caa-eed7-4575-a990-717386438d2c/months"
+	url := "https://api.ynab.com/v1/budgets/aa248caa-eed7-4575-a990-717386438d2c/months"
 	httpmock.RegisterResponder(http.MethodGet, url,
 		func(req *http.Request) (*http.Response, error) {
 			res := httpmock.NewStringResponse(200, `{
@@ -68,7 +68,7 @@ func TestService_GetMonth(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	url := "https://api.youneedabudget.com/v1/budgets/aa248caa-eed7-4575-a990-717386438d2c/months/2017-10-01"
+	url := "https://api.ynab.com/v1/budgets/aa248caa-eed7-4575-a990-717386438d2c/months/2017-10-01"
 	httpmock.RegisterResponder(http.MethodGet, url,
 		func(req *http.Request) (*http.Response, error) {
 			res := httpmock.NewStringResponse(200, `{

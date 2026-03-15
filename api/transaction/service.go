@@ -26,7 +26,7 @@ type SearchResultSnapshot struct {
 
 // GetTransactions fetches the list of transactions from
 // a budget with filtering capabilities
-// https://api.youneedabudget.com/v1#/Transactions/getTransactions
+// https://api.ynab.com/v1#/Transactions/getTransactions
 func (s *Service) GetTransactions(budgetID string, f *Filter) (*SearchResultSnapshot, error) {
 	resModel := struct {
 		Data struct {
@@ -51,7 +51,7 @@ func (s *Service) GetTransactions(budgetID string, f *Filter) (*SearchResultSnap
 }
 
 // GetTransaction fetches a specific transaction from a budget
-// https://api.youneedabudget.com/v1#/Transactions/getTransactionsById
+// https://api.ynab.com/v1#/Transactions/getTransactionsById
 func (s *Service) GetTransaction(budgetID, transactionID string) (*Transaction, error) {
 	resModel := struct {
 		Data struct {
@@ -67,7 +67,7 @@ func (s *Service) GetTransaction(budgetID, transactionID string) (*Transaction, 
 }
 
 // CreateTransaction creates a new transaction for a budget
-// https://api.youneedabudget.com/v1#/Transactions/createTransaction
+// https://api.ynab.com/v1#/Transactions/createTransaction
 func (s *Service) CreateTransaction(budgetID string,
 	p PayloadTransaction) (*OperationSummary, error) {
 
@@ -75,7 +75,7 @@ func (s *Service) CreateTransaction(budgetID string,
 }
 
 // CreateTransactions creates one or more new transactions for a budget
-// https://api.youneedabudget.com/v1#/Transactions/createTransaction
+// https://api.ynab.com/v1#/Transactions/createTransaction
 func (s *Service) CreateTransactions(budgetID string,
 	p []PayloadTransaction) (*OperationSummary, error) {
 
@@ -103,7 +103,7 @@ func (s *Service) CreateTransactions(budgetID string,
 }
 
 // BulkCreateTransactions creates multiple transactions for a budget
-// https://api.youneedabudget.com/v1#/Transactions/bulkCreateTransactions
+// https://api.ynab.com/v1#/Transactions/bulkCreateTransactions
 // Deprecated: Use transaction.CreateTransactions instead.
 func (s *Service) BulkCreateTransactions(budgetID string,
 	ps []PayloadTransaction) (*Bulk, error) {
@@ -133,7 +133,7 @@ func (s *Service) BulkCreateTransactions(budgetID string,
 }
 
 // UpdateTransaction updates a whole transaction for a replacement
-// https://api.youneedabudget.com/v1#/Transactions/updateTransaction
+// https://api.ynab.com/v1#/Transactions/updateTransaction
 func (s *Service) UpdateTransaction(budgetID, transactionID string,
 	p PayloadTransaction) (*Transaction, error) {
 
@@ -162,7 +162,7 @@ func (s *Service) UpdateTransaction(budgetID, transactionID string,
 }
 
 // UpdateTransactions creates one or more new transactions for a budget
-// https://api.youneedabudget.com/v1#/Transactions/updateTransactions
+// https://api.ynab.com/v1#/Transactions/updateTransactions
 func (s *Service) UpdateTransactions(budgetID string,
 	p []PayloadTransaction) (*OperationSummary, error) {
 
@@ -190,7 +190,7 @@ func (s *Service) UpdateTransactions(budgetID string,
 }
 
 // DeleteTransaction deletes a transaction from a budget
-// https://api.youneedabudget.com/v1#/Transactions/deleteTransaction
+// https://api.ynab.com/v1#/Transactions/deleteTransaction
 func (s *Service) DeleteTransaction(budgetID, transactionID string) (*Transaction, error) {
 	resModel := struct {
 		Data struct {
@@ -208,7 +208,7 @@ func (s *Service) DeleteTransaction(budgetID, transactionID string) (*Transactio
 
 // GetTransactionsByAccount fetches the list of transactions of a specific account
 // from a budget with filtering capabilities
-// https://api.youneedabudget.com/v1#/Transactions/getTransactionsByAccount
+// https://api.ynab.com/v1#/Transactions/getTransactionsByAccount
 func (s *Service) GetTransactionsByAccount(budgetID, accountID string,
 	f *Filter) (*SearchResultSnapshot, error) {
 
@@ -235,7 +235,7 @@ func (s *Service) GetTransactionsByAccount(budgetID, accountID string,
 }
 
 // GetTransactionsByMonth fetches the list of transactions for a specific month from a budget
-// https://api.youneedabudget.com/v1#/Transactions/getTransactionsByMonth
+// https://api.ynab.com/v1#/Transactions/getTransactionsByMonth
 func (s *Service) GetTransactionsByMonth(budgetID, month string, f *Filter) (*SearchResultSnapshot, error) {
 	resModel := struct {
 		Data struct {
@@ -261,7 +261,7 @@ func (s *Service) GetTransactionsByMonth(budgetID, month string, f *Filter) (*Se
 
 // GetTransactionsByCategory fetches the list of transactions of a specific category
 // from a budget with filtering capabilities
-// https://api.youneedabudget.com/v1#/Transactions/getTransactionsByCategory
+// https://api.ynab.com/v1#/Transactions/getTransactionsByCategory
 func (s *Service) GetTransactionsByCategory(budgetID, categoryID string,
 	f *Filter) ([]*Hybrid, error) {
 
@@ -285,7 +285,7 @@ func (s *Service) GetTransactionsByCategory(budgetID, categoryID string,
 
 // GetTransactionsByPayee fetches the list of transactions of a specific payee
 // from a budget with filtering capabilities
-// https://api.youneedabudget.com/v1#/Transactions/getTransactionsByPayee
+// https://api.ynab.com/v1#/Transactions/getTransactionsByPayee
 func (s *Service) GetTransactionsByPayee(budgetID, payeeID string,
 	f *Filter) ([]*Hybrid, error) {
 
@@ -315,7 +315,7 @@ type ScheduledSearchResultSnapshot struct {
 
 // GetScheduledTransactions fetches the list of scheduled transactions from
 // a budget with filtering capabilities
-// https://api.youneedabudget.com/v1#/Scheduled_Transactions/getScheduledTransactions
+// https://api.ynab.com/v1#/Scheduled_Transactions/getScheduledTransactions
 func (s *Service) GetScheduledTransactions(budgetID string, f *api.Filter) (*ScheduledSearchResultSnapshot, error) {
 	resModel := struct {
 		Data struct {
@@ -340,7 +340,7 @@ func (s *Service) GetScheduledTransactions(budgetID string, f *api.Filter) (*Sch
 }
 
 // GetScheduledTransaction fetches a specific scheduled transaction from a budget
-// https://api.youneedabudget.com/v1#/Scheduled_Transactions/getScheduledTransactionById
+// https://api.ynab.com/v1#/Scheduled_Transactions/getScheduledTransactionById
 func (s *Service) GetScheduledTransaction(budgetID, scheduledTransactionID string) (*Scheduled, error) {
 	resModel := struct {
 		Data struct {
@@ -379,7 +379,7 @@ func (f *Filter) ToQuery() string {
 }
 
 // CreateScheduledTransaction creates a new scheduled transaction for a budget
-// https://api.youneedabudget.com/v1#/Scheduled_Transactions/createScheduledTransaction
+// https://api.ynab.com/v1#/Scheduled_Transactions/createScheduledTransaction
 func (s *Service) CreateScheduledTransaction(budgetID string, p PayloadScheduledTransaction) (*Scheduled, error) {
 	payload := struct {
 		ScheduledTransaction *PayloadScheduledTransaction `json:"scheduled_transaction"`
@@ -406,7 +406,7 @@ func (s *Service) CreateScheduledTransaction(budgetID string, p PayloadScheduled
 }
 
 // UpdateScheduledTransaction updates a scheduled transaction for a budget
-// https://api.youneedabudget.com/v1#/Scheduled_Transactions/updateScheduledTransaction
+// https://api.ynab.com/v1#/Scheduled_Transactions/updateScheduledTransaction
 func (s *Service) UpdateScheduledTransaction(budgetID, scheduledTransactionID string, p PayloadScheduledTransaction) (*Scheduled, error) {
 	payload := struct {
 		ScheduledTransaction *PayloadScheduledTransaction `json:"scheduled_transaction"`
@@ -433,7 +433,7 @@ func (s *Service) UpdateScheduledTransaction(budgetID, scheduledTransactionID st
 }
 
 // DeleteScheduledTransaction deletes a scheduled transaction from a budget
-// https://api.youneedabudget.com/v1#/Scheduled_Transactions/deleteScheduledTransaction
+// https://api.ynab.com/v1#/Scheduled_Transactions/deleteScheduledTransaction
 func (s *Service) DeleteScheduledTransaction(budgetID, scheduledTransactionID string) (*Scheduled, error) {
 	resModel := struct {
 		Data struct {
@@ -450,7 +450,7 @@ func (s *Service) DeleteScheduledTransaction(budgetID, scheduledTransactionID st
 }
 
 // ImportTransactions imports available transactions from all linked accounts for a budget
-// https://api.youneedabudget.com/v1#/Transactions/importTransactions
+// https://api.ynab.com/v1#/Transactions/importTransactions
 func (s *Service) ImportTransactions(budgetID string) (*ImportResult, error) {
 	resModel := struct {
 		Data *ImportResult `json:"data"`

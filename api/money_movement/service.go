@@ -17,7 +17,7 @@ type Service struct {
 }
 
 // GetMoneyMovements fetches all money movements for a plan
-// https://api.youneedabudget.com/v1#/Money%20Movements/getMoneyMovements
+// https://api.ynab.com/v1#/Money%20Movements/getMoneyMovements
 func (s *Service) GetMoneyMovements(planID string) ([]*MoneyMovement, error) {
 	resModel := struct {
 		Data struct {
@@ -33,7 +33,7 @@ func (s *Service) GetMoneyMovements(planID string) ([]*MoneyMovement, error) {
 }
 
 // GetMoneyMovementsByMonth fetches money movements for a specific plan month
-// https://api.youneedabudget.com/v1#/Money%20Movements/getMoneyMovementsByMonth
+// https://api.ynab.com/v1#/Money%20Movements/getMoneyMovementsByMonth
 func (s *Service) GetMoneyMovementsByMonth(planID string, month string) ([]*MoneyMovement, error) {
 	resModel := struct {
 		Data struct {
@@ -49,7 +49,7 @@ func (s *Service) GetMoneyMovementsByMonth(planID string, month string) ([]*Mone
 }
 
 // GetMoneyMovementGroups fetches all money movement groups for a plan
-// https://api.youneedabudget.com/v1#/Money%20Movements/getMoneyMovementGroups
+// https://api.ynab.com/v1#/Money%20Movements/getMoneyMovementGroups
 func (s *Service) GetMoneyMovementGroups(planID string) ([]*MoneyMovementGroup, error) {
 	resModel := struct {
 		Data struct {
@@ -65,7 +65,7 @@ func (s *Service) GetMoneyMovementGroups(planID string) ([]*MoneyMovementGroup, 
 }
 
 // GetMoneyMovementGroupsByMonth fetches money movement groups for a specific plan month
-// https://api.youneedabudget.com/v1#/Money%20Movements/getMoneyMovementGroupsByMonth
+// https://api.ynab.com/v1#/Money%20Movements/getMoneyMovementGroupsByMonth
 func (s *Service) GetMoneyMovementGroupsByMonth(planID string, month string) ([]*MoneyMovementGroup, error) {
 	resModel := struct {
 		Data struct {

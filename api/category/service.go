@@ -20,7 +20,7 @@ type Service struct {
 }
 
 // GetCategories fetches the list of category groups for a budget
-// https://api.youneedabudget.com/v1#/Categories/getCategories
+// https://api.ynab.com/v1#/Categories/getCategories
 func (s *Service) GetCategories(budgetID string, f *api.Filter) (*SearchResultSnapshot, error) {
 	resModel := struct {
 		Data struct {
@@ -44,7 +44,7 @@ func (s *Service) GetCategories(budgetID string, f *api.Filter) (*SearchResultSn
 }
 
 // GetCategory fetches a specific category from a budget
-// https://api.youneedabudget.com/v1#/Categories/getCategoryById
+// https://api.ynab.com/v1#/Categories/getCategoryById
 func (s *Service) GetCategory(budgetID, categoryID string) (*Category, error) {
 	resModel := struct {
 		Data struct {
@@ -60,7 +60,7 @@ func (s *Service) GetCategory(budgetID, categoryID string) (*Category, error) {
 }
 
 // GetCategoryForMonth fetches a specific category from a budget month
-// https://api.youneedabudget.com/v1#/Categories/getMonthCategoryById
+// https://api.ynab.com/v1#/Categories/getMonthCategoryById
 func (s *Service) GetCategoryForMonth(budgetID, categoryID string,
 	month api.Date) (*Category, error) {
 
@@ -68,7 +68,7 @@ func (s *Service) GetCategoryForMonth(budgetID, categoryID string,
 }
 
 // GetCategoryForCurrentMonth fetches a specific category from the current budget month
-// https://api.youneedabudget.com/v1#/Categories/getMonthCategoryById
+// https://api.ynab.com/v1#/Categories/getMonthCategoryById
 func (s *Service) GetCategoryForCurrentMonth(budgetID, categoryID string) (*Category, error) {
 	return s.getCategoryForMonth(budgetID, categoryID, currentMonthID)
 }
@@ -88,7 +88,7 @@ func (s *Service) getCategoryForMonth(budgetID, categoryID, month string) (*Cate
 }
 
 // UpdateCategoryForMonth updates a category for a month
-// https://api.youneedabudget.com/v1#/Categories/updateMonthCategory
+// https://api.ynab.com/v1#/Categories/updateMonthCategory
 func (s *Service) UpdateCategoryForMonth(budgetID, categoryID string, month api.Date,
 	p PayloadMonthCategory) (*Category, error) {
 
@@ -96,7 +96,7 @@ func (s *Service) UpdateCategoryForMonth(budgetID, categoryID string, month api.
 }
 
 // UpdateCategoryForCurrentMonth updates a category for the current month
-// https://api.youneedabudget.com/v1#/Categories/updateMonthCategory
+// https://api.ynab.com/v1#/Categories/updateMonthCategory
 func (s *Service) UpdateCategoryForCurrentMonth(budgetID, categoryID string,
 	p PayloadMonthCategory) (*Category, error) {
 
@@ -133,7 +133,7 @@ func (s *Service) updateCategoryForMonth(budgetID, categoryID, month string,
 }
 
 // UpdateCategory updates a category
-// https://api.youneedabudget.com/v1#/Categories/updateCategory
+// https://api.ynab.com/v1#/Categories/updateCategory
 func (s *Service) UpdateCategory(budgetID, categoryID string, p PayloadCategory) (*Category, error) {
 	payload := struct {
 		Category *PayloadCategory `json:"category"`
@@ -161,7 +161,7 @@ func (s *Service) UpdateCategory(budgetID, categoryID string, p PayloadCategory)
 }
 
 // CreateCategory creates a new category
-// https://api.youneedabudget.com/v1#/Categories/createCategory
+// https://api.ynab.com/v1#/Categories/createCategory
 func (s *Service) CreateCategory(planID string, p PayloadCreateCategory) (*Category, error) {
 	payload := struct {
 		Category *PayloadCreateCategory `json:"category"`
@@ -189,7 +189,7 @@ func (s *Service) CreateCategory(planID string, p PayloadCreateCategory) (*Categ
 }
 
 // CreateCategoryGroup creates a new category group
-// https://api.youneedabudget.com/v1#/Categories/createCategoryGroup
+// https://api.ynab.com/v1#/Categories/createCategoryGroup
 func (s *Service) CreateCategoryGroup(planID string, p PayloadCreateCategoryGroup) (*Group, error) {
 	payload := struct {
 		CategoryGroup *PayloadCreateCategoryGroup `json:"category_group"`
@@ -217,7 +217,7 @@ func (s *Service) CreateCategoryGroup(planID string, p PayloadCreateCategoryGrou
 }
 
 // UpdateCategoryGroup updates a category group
-// https://api.youneedabudget.com/v1#/Categories/updateCategoryGroup
+// https://api.ynab.com/v1#/Categories/updateCategoryGroup
 func (s *Service) UpdateCategoryGroup(planID, categoryGroupID string, p PayloadUpdateCategoryGroup) (*Group, error) {
 	payload := struct {
 		CategoryGroup *PayloadUpdateCategoryGroup `json:"category_group"`

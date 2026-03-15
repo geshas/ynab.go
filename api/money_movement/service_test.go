@@ -17,7 +17,7 @@ func TestService_GetMoneyMovements(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		url := "https://api.youneedabudget.com/v1/plans/plan-id-123/money_movements"
+		url := "https://api.ynab.com/v1/plans/plan-id-123/money_movements"
 		httpmock.RegisterResponder(http.MethodGet, url,
 			func(req *http.Request) (*http.Response, error) {
 				res := httpmock.NewStringResponse(200, `{
@@ -67,7 +67,7 @@ func TestService_GetMoneyMovements(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		url := "https://api.youneedabudget.com/v1/plans/plan-id-123/money_movements"
+		url := "https://api.ynab.com/v1/plans/plan-id-123/money_movements"
 		httpmock.RegisterResponder(http.MethodGet, url,
 			func(req *http.Request) (*http.Response, error) {
 				res := httpmock.NewStringResponse(200, `{
@@ -91,7 +91,7 @@ func TestService_GetMoneyMovementsByMonth(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		url := "https://api.youneedabudget.com/v1/plans/plan-id-123/months/2024-01/money_movements"
+		url := "https://api.ynab.com/v1/plans/plan-id-123/months/2024-01/money_movements"
 		httpmock.RegisterResponder(http.MethodGet, url,
 			func(req *http.Request) (*http.Response, error) {
 				res := httpmock.NewStringResponse(200, `{
@@ -137,7 +137,7 @@ func TestService_GetMoneyMovementGroups(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		url := "https://api.youneedabudget.com/v1/plans/plan-id-123/money_movement_groups"
+		url := "https://api.ynab.com/v1/plans/plan-id-123/money_movement_groups"
 		httpmock.RegisterResponder(http.MethodGet, url,
 			func(req *http.Request) (*http.Response, error) {
 				res := httpmock.NewStringResponse(200, `{
@@ -202,7 +202,7 @@ func TestService_GetMoneyMovementGroups(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		url := "https://api.youneedabudget.com/v1/plans/plan-id-123/money_movement_groups"
+		url := "https://api.ynab.com/v1/plans/plan-id-123/money_movement_groups"
 		httpmock.RegisterResponder(http.MethodGet, url,
 			func(req *http.Request) (*http.Response, error) {
 				res := httpmock.NewStringResponse(200, `{
@@ -226,7 +226,7 @@ func TestService_GetMoneyMovementGroupsByMonth(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		url := "https://api.youneedabudget.com/v1/plans/plan-id-123/months/2024-01/money_movement_groups"
+		url := "https://api.ynab.com/v1/plans/plan-id-123/months/2024-01/money_movement_groups"
 		httpmock.RegisterResponder(http.MethodGet, url,
 			func(req *http.Request) (*http.Response, error) {
 				res := httpmock.NewStringResponse(200, `{

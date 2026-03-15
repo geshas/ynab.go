@@ -2,7 +2,7 @@
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/geshas/ynab.go)](https://goreportcard.com/report/github.com/geshas/ynab.go) [![GoDoc Reference](https://godoc.org/github.com/geshas/ynab.go?status.svg)](https://godoc.org/github.com/geshas/ynab.go)
 
-This is an UNOFFICIAL Go client for the YNAB API. It covers 100% of the resources made available by the [YNAB API](https://api.youneedabudget.com).
+This is an UNOFFICIAL Go client for the YNAB API. It covers 100% of the resources made available by the [YNAB API](https://api.ynab.com).
 
 ## 📚 Quick Navigation
 

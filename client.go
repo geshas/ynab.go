@@ -20,7 +20,7 @@ import (
 	"github.com/geshas/ynab.go/oauth"
 )
 
-const apiEndpoint = "https://api.youneedabudget.com/v1"
+const apiEndpoint = "https://api.ynab.com/v1"
 
 // ClientServicer contract for a client service API
 type ClientServicer interface {
