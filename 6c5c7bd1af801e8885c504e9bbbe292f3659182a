@@ -1,0 +1,23 @@
+example_test.go
+  05b04c894466468e 36
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.12",
+  "base_commit_sha": "6c5c7bd1af801e8885c504e9bbbe292f3659182a",
+  "prompts": {
+    "05b04c894466468e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_30ccc2083ffeoL0vcYCAjXmPwp",
+        "model": "opencode/minimax-m2.5-free"
+      },
+      "human_author": "Evgeny <evgeny@example.com>",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 18,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    }
+  }
+}
