@@ -1,0 +1,23 @@
+api/category/create_category_test.go
+  05b04c894466468e 1-256
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.12",
+  "base_commit_sha": "691d80bcc2ff564bcec818c5f4a8a5cd6f994fde",
+  "prompts": {
+    "05b04c894466468e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_30ccc2083ffeoL0vcYCAjXmPwp",
+        "model": "opencode/minimax-m2.5-free"
+      },
+      "human_author": "Evgeny <evgeny@example.com>",
+      "messages": [],
+      "total_additions": 256,
+      "total_deletions": 0,
+      "accepted_lines": 256,
+      "overriden_lines": 0
+    }
+  }
+}
