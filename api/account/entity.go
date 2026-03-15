@@ -1,5 +1,5 @@
 // Package account implements account entities and services
-package account // import "github.com/coltoneshaw/ynab.go/api/account"
+package account // import "github.com/geshas/ynab.go/api/account"
 
 // LoanAccountPeriodicValue represents periodic values for loan accounts
 // keyed by date strings in YYYY-MM-DD format (e.g., "2024-01-01").

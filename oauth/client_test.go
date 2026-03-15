@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/coltoneshaw/ynab.go/oauth"
+	"github.com/geshas/ynab.go/oauth"
 )
 
 func TestNewOAuthClient(t *testing.T) {

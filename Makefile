@@ -5,7 +5,7 @@
 GO_PACKAGES=$(shell go list ./...)
 GO ?= $(shell command -v go 2> /dev/null)
 export GOBIN ?= $(PWD)/bin
-GOLANGCI_LINT_VERSION=v2.2.1
+GOLANGCI_LINT_VERSION=latest
 
 # Install go tools
 install-go-tools:

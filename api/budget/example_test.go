@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/coltoneshaw/ynab.go/api"
+	"github.com/geshas/ynab.go/api"
 
-	"github.com/coltoneshaw/ynab.go"
+	"github.com/geshas/ynab.go"
 )
 
 func ExampleService_GetBudget() {

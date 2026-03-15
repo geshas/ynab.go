@@ -1,5 +1,5 @@
 // Package ynab implements the client API
-package ynab // import "github.com/coltoneshaw/ynab.go"
+package ynab // import "github.com/geshas/ynab.go"
 
 import (
 	"context"
@@ -7,15 +7,15 @@ import (
 	"sync"
 	"time"
 
-	"github.com/coltoneshaw/ynab.go/api"
-	"github.com/coltoneshaw/ynab.go/api/account"
-	"github.com/coltoneshaw/ynab.go/api/budget"
-	"github.com/coltoneshaw/ynab.go/api/category"
-	"github.com/coltoneshaw/ynab.go/api/month"
-	"github.com/coltoneshaw/ynab.go/api/payee"
-	"github.com/coltoneshaw/ynab.go/api/transaction"
-	"github.com/coltoneshaw/ynab.go/api/user"
-	"github.com/coltoneshaw/ynab.go/oauth"
+	"github.com/geshas/ynab.go/api"
+	"github.com/geshas/ynab.go/api/account"
+	"github.com/geshas/ynab.go/api/budget"
+	"github.com/geshas/ynab.go/api/category"
+	"github.com/geshas/ynab.go/api/month"
+	"github.com/geshas/ynab.go/api/payee"
+	"github.com/geshas/ynab.go/api/transaction"
+	"github.com/geshas/ynab.go/api/user"
+	"github.com/geshas/ynab.go/oauth"
 )
 
 const apiEndpoint = "https://api.youneedabudget.com/v1"

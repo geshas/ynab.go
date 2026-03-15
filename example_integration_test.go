@@ -9,8 +9,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/coltoneshaw/ynab.go"
-	"github.com/coltoneshaw/ynab.go/oauth"
+	"github.com/geshas/ynab.go"
+	"github.com/geshas/ynab.go/oauth"
 )
 
 // Example_oAuthIntegration demonstrates OAuth 2.0 integration with the YNAB client

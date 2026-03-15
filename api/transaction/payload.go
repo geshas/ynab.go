@@ -1,7 +1,7 @@
 package transaction
 
 import (
-	"github.com/coltoneshaw/ynab.go/api"
+	"github.com/geshas/ynab.go/api"
 )
 
 // PayloadTransaction is the payload contract for saving a transaction, new or existent

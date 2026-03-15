@@ -1,7 +1,7 @@
 package user
 
 import (
-	"github.com/coltoneshaw/ynab.go/api"
+	"github.com/geshas/ynab.go/api"
 )
 
 // NewService facilitates the creation of a new user service instance

@@ -1,6 +1,6 @@
 # YNAB API Go Library
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/coltoneshaw/ynab.go)](https://goreportcard.com/report/github.com/coltoneshaw/ynab.go) [![GoDoc Reference](https://godoc.org/github.com/coltoneshaw/ynab.go?status.svg)](https://godoc.org/github.com/coltoneshaw/ynab.go)
+[![Go Report Card](https://goreportcard.com/badge/github.com/geshas/ynab.go)](https://goreportcard.com/report/github.com/geshas/ynab.go) [![GoDoc Reference](https://godoc.org/github.com/geshas/ynab.go?status.svg)](https://godoc.org/github.com/geshas/ynab.go)
 
 This is an UNOFFICIAL Go client for the YNAB API. It covers 100% of the resources made available by the [YNAB API](https://api.youneedabudget.com).
 
@@ -28,7 +28,7 @@ This is an UNOFFICIAL Go client for the YNAB API. It covers 100% of the resource
 ## Installation
 
 ```bash
-go get github.com/coltoneshaw/ynab.go
+go get github.com/geshas/ynab.go
 ```
 
 ## Quick Start
@@ -45,7 +45,7 @@ import (
     "fmt"
     "log"
 
-    "github.com/coltoneshaw/ynab.go"
+    "github.com/geshas/ynab.go"
 )
 
 func main() {
@@ -114,7 +114,7 @@ import (
     "fmt"
     "log"
 
-    "github.com/coltoneshaw/ynab.go"
+    "github.com/geshas/ynab.go"
 )
 
 func main() {
@@ -503,7 +503,7 @@ The library provides **enhanced error handling** with type-safe constants and he
 ### Basic Error Handling
 
 ```go
-import "github.com/coltoneshaw/ynab.go/api"
+import "github.com/geshas/ynab.go/api"
 
 user, err := client.User().GetUser()
 if err != nil {
@@ -540,7 +540,7 @@ if err != nil {
 All YNAB API error codes are available as type-safe constants:
 
 ```go
-import "github.com/coltoneshaw/ynab.go/api"
+import "github.com/geshas/ynab.go/api"
 
 // 4xx Client Errors
 api.ErrorBadRequest         // "400" - Validation/malformed request
@@ -836,7 +836,7 @@ client := ynab.NewOAuthClientBuilder(config).
 
 ## API Reference
 
-See the [godoc](https://godoc.org/github.com/coltoneshaw/ynab.go) for complete API documentation with examples.
+See the [godoc](https://godoc.org/github.com/geshas/ynab.go) for complete API documentation with examples.
 
 ## Rate Limiting
 

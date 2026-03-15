@@ -7,14 +7,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/coltoneshaw/ynab.go/api"
-	"github.com/coltoneshaw/ynab.go/api/account"
-	"github.com/coltoneshaw/ynab.go/api/budget"
-	"github.com/coltoneshaw/ynab.go/api/category"
-	"github.com/coltoneshaw/ynab.go/api/month"
-	"github.com/coltoneshaw/ynab.go/api/payee"
-	"github.com/coltoneshaw/ynab.go/api/transaction"
-	"github.com/coltoneshaw/ynab.go/api/user"
+	"github.com/geshas/ynab.go/api"
+	"github.com/geshas/ynab.go/api/account"
+	"github.com/geshas/ynab.go/api/budget"
+	"github.com/geshas/ynab.go/api/category"
+	"github.com/geshas/ynab.go/api/month"
+	"github.com/geshas/ynab.go/api/payee"
+	"github.com/geshas/ynab.go/api/transaction"
+	"github.com/geshas/ynab.go/api/user"
 )
 
 // OAuthClient is a YNAB client that uses OAuth for authentication

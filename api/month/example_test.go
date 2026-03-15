@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/coltoneshaw/ynab.go"
-	"github.com/coltoneshaw/ynab.go/api"
+	"github.com/geshas/ynab.go"
+	"github.com/geshas/ynab.go/api"
 )
 
 //nolint:govet

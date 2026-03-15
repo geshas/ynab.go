@@ -3,7 +3,7 @@ package month
 import (
 	"fmt"
 
-	"github.com/coltoneshaw/ynab.go/api"
+	"github.com/geshas/ynab.go/api"
 )
 
 // NewService facilitates the creation of a new month service instance

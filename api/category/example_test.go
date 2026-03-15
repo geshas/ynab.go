@@ -3,12 +3,12 @@ package category_test
 import (
 	"fmt"
 
-	"github.com/coltoneshaw/ynab.go/api/category"
+	"github.com/geshas/ynab.go/api/category"
 
 	"reflect"
 
-	"github.com/coltoneshaw/ynab.go"
-	"github.com/coltoneshaw/ynab.go/api"
+	"github.com/geshas/ynab.go"
+	"github.com/geshas/ynab.go/api"
 )
 
 func ExampleService_GetCategory() {

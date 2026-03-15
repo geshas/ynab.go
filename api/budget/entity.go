@@ -1,15 +1,15 @@
 // Package budget implements budget entities and services
-package budget // import "github.com/coltoneshaw/ynab.go/api/budget"
+package budget // import "github.com/geshas/ynab.go/api/budget"
 
 import (
 	"time"
 
-	"github.com/coltoneshaw/ynab.go/api"
-	"github.com/coltoneshaw/ynab.go/api/account"
-	"github.com/coltoneshaw/ynab.go/api/category"
-	"github.com/coltoneshaw/ynab.go/api/month"
-	"github.com/coltoneshaw/ynab.go/api/payee"
-	"github.com/coltoneshaw/ynab.go/api/transaction"
+	"github.com/geshas/ynab.go/api"
+	"github.com/geshas/ynab.go/api/account"
+	"github.com/geshas/ynab.go/api/category"
+	"github.com/geshas/ynab.go/api/month"
+	"github.com/geshas/ynab.go/api/payee"
+	"github.com/geshas/ynab.go/api/transaction"
 )
 
 // Budget represents a budget

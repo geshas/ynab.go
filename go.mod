@@ -1,4 +1,4 @@
-module github.com/coltoneshaw/ynab.go
+module github.com/geshas/ynab.go
 
 go 1.24
 
