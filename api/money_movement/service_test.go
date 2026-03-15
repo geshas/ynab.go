@@ -147,13 +147,10 @@ func TestService_GetMoneyMovementGroups(t *testing.T) {
     "money_movement_groups": [
       {
         "id": "group-123",
-        "category_id": "cat-456",
-        "category_name": "Groceries",
-        "income": false,
-        "goal_target": 50000,
-        "goal_target_date": "2024-12-31T00:00:00Z",
-        "goal_underfunded": false,
-        "goal_overspent": false,
+        "group_created_at": "2024-01-10T12:00:00Z",
+        "month": "2024-01-01",
+        "note": "Groceries adjustments",
+        "performed_by_user_id": "user-123",
         "money_movements": [
           {
             "id": "mm-123",
@@ -177,7 +174,8 @@ func TestService_GetMoneyMovementGroups(t *testing.T) {
           }
         ]
       }
-    ]
+    ],
+    "server_knowledge": 0
   }
 }`)
 				return res, nil
