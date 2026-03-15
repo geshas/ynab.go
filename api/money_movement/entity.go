@@ -30,13 +30,9 @@ type MoneyMovement struct {
 
 // MoneyMovementGroup represents a group of money movements
 type MoneyMovementGroup struct {
-	ID              string           `json:"id"`
-	CategoryID      string           `json:"category_id"`
-	CategoryName    string           `json:"category_name"`
-	Income          bool             `json:"income"`
-	GoalTarget      *int64           `json:"goal_target"`
-	GoalTargetDate  *time.Time       `json:"goal_target_date"`
-	GoalUnderfunded *bool            `json:"goal_underfunded"`
-	GoalOverspent   *bool            `json:"goal_overspent"`
-	MoneyMovements  []*MoneyMovement `json:"money_movements"`
+	GroupCreatedAt    time.Time        `json:"group_created_at"`
+	Month             *api.Date        `json:"month"`
+	Note              *string          `json:"note,omitempty"`
+	PerformedByUserID string           `json:"performed_by_user_id"`
+	MoneyMovements    []*MoneyMovement `json:"money_movements"`
 }
