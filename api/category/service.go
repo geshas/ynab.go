@@ -159,3 +159,87 @@ func (s *Service) UpdateCategory(budgetID, categoryID string, p PayloadCategory)
 	}
 	return resModel.Data.Category, nil
 }
+
+// CreateCategory creates a new category
+// https://api.youneedabudget.com/v1#/Categories/createCategory
+func (s *Service) CreateCategory(planID string, p PayloadCreateCategory) (*Category, error) {
+	payload := struct {
+		Category *PayloadCreateCategory `json:"category"`
+	}{
+		&p,
+	}
+
+	buf, err := json.Marshal(&payload)
+	if err != nil {
+		return nil, err
+	}
+
+	resModel := struct {
+		Data struct {
+			Category *Category `json:"category"`
+		} `json:"data"`
+	}{}
+
+	url := fmt.Sprintf("/plans/%s/categories", planID)
+
+	if err := s.c.POST(url, &resModel, buf); err != nil {
+		return nil, err
+	}
+	return resModel.Data.Category, nil
+}
+
+// CreateCategoryGroup creates a new category group
+// https://api.youneedabudget.com/v1#/Categories/createCategoryGroup
+func (s *Service) CreateCategoryGroup(planID string, p PayloadCreateCategoryGroup) (*Group, error) {
+	payload := struct {
+		CategoryGroup *PayloadCreateCategoryGroup `json:"category_group"`
+	}{
+		&p,
+	}
+
+	buf, err := json.Marshal(&payload)
+	if err != nil {
+		return nil, err
+	}
+
+	resModel := struct {
+		Data struct {
+			CategoryGroup *Group `json:"category_group"`
+		} `json:"data"`
+	}{}
+
+	url := fmt.Sprintf("/plans/%s/category_groups", planID)
+
+	if err := s.c.POST(url, &resModel, buf); err != nil {
+		return nil, err
+	}
+	return resModel.Data.CategoryGroup, nil
+}
+
+// UpdateCategoryGroup updates a category group
+// https://api.youneedabudget.com/v1#/Categories/updateCategoryGroup
+func (s *Service) UpdateCategoryGroup(planID, categoryGroupID string, p PayloadUpdateCategoryGroup) (*Group, error) {
+	payload := struct {
+		CategoryGroup *PayloadUpdateCategoryGroup `json:"category_group"`
+	}{
+		&p,
+	}
+
+	buf, err := json.Marshal(&payload)
+	if err != nil {
+		return nil, err
+	}
+
+	resModel := struct {
+		Data struct {
+			CategoryGroup *Group `json:"category_group"`
+		} `json:"data"`
+	}{}
+
+	url := fmt.Sprintf("/plans/%s/category_groups/%s", planID, categoryGroupID)
+
+	if err := s.c.PATCH(url, &resModel, buf); err != nil {
+		return nil, err
+	}
+	return resModel.Data.CategoryGroup, nil
+}

@@ -11,8 +11,10 @@ import (
 	"github.com/geshas/ynab.go/api/account"
 	"github.com/geshas/ynab.go/api/budget"
 	"github.com/geshas/ynab.go/api/category"
+	"github.com/geshas/ynab.go/api/money_movement"
 	"github.com/geshas/ynab.go/api/month"
 	"github.com/geshas/ynab.go/api/payee"
+	"github.com/geshas/ynab.go/api/plan"
 	"github.com/geshas/ynab.go/api/transaction"
 	"github.com/geshas/ynab.go/api/user"
 	"github.com/geshas/ynab.go/oauth"
@@ -24,11 +26,13 @@ const apiEndpoint = "https://api.youneedabudget.com/v1"
 type ClientServicer interface {
 	User() *user.Service
 	Budget() *budget.Service
+	Plan() *plan.Service
 	Account() *account.Service
 	Category() *category.Service
 	Payee() *payee.Service
 	Month() *month.Service
 	Transaction() *transaction.Service
+	MoneyMovement() *money_movement.Service
 
 	// Rate limiting interface
 	api.RateLimiter
@@ -56,11 +60,13 @@ func NewClientWithTokenProvider(tokenProvider api.TokenProvider) ClientServicer 
 
 	c.user = user.NewService(c)
 	c.budget = budget.NewService(c)
+	c.plan = plan.NewService(c)
 	c.account = account.NewService(c)
 	c.category = category.NewService(c)
 	c.payee = payee.NewService(c)
 	c.month = month.NewService(c)
 	c.transaction = transaction.NewService(c)
+	c.moneyMovement = money_movement.NewService(c)
 	return c
 }
 
@@ -74,13 +80,15 @@ type client struct {
 
 	rateLimiter *api.RateLimitTracker
 
-	user        *user.Service
-	budget      *budget.Service
-	account     *account.Service
-	category    *category.Service
-	payee       *payee.Service
-	month       *month.Service
-	transaction *transaction.Service
+	user          *user.Service
+	budget        *budget.Service
+	plan          *plan.Service
+	account       *account.Service
+	category      *category.Service
+	payee         *payee.Service
+	month         *month.Service
+	transaction   *transaction.Service
+	moneyMovement *money_movement.Service
 }
 
 // WithHTTPClient sets a custom HTTP client and returns the client for chaining
@@ -97,6 +105,11 @@ func (c *client) User() *user.Service {
 // Budget returns budget.Service API instance
 func (c *client) Budget() *budget.Service {
 	return c.budget
+}
+
+// Plan returns plan.Service API instance
+func (c *client) Plan() *plan.Service {
+	return c.plan
 }
 
 // Account returns account.Service API instance
@@ -122,6 +135,11 @@ func (c *client) Month() *month.Service {
 // Transaction returns transaction.Service API instance
 func (c *client) Transaction() *transaction.Service {
 	return c.transaction
+}
+
+// MoneyMovement returns money_movement.Service API instance
+func (c *client) MoneyMovement() *money_movement.Service {
+	return c.moneyMovement
 }
 
 // RequestsRemaining returns how many requests can be made before hitting the rate limit
