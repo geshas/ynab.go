@@ -9,7 +9,6 @@ import (
 
 	"github.com/geshas/ynab.go/api"
 	"github.com/geshas/ynab.go/api/account"
-	"github.com/geshas/ynab.go/api/budget"
 	"github.com/geshas/ynab.go/api/category"
 	"github.com/geshas/ynab.go/api/money_movement"
 	"github.com/geshas/ynab.go/api/month"
@@ -25,7 +24,6 @@ const apiEndpoint = "https://api.ynab.com/v1"
 // ClientServicer contract for a client service API
 type ClientServicer interface {
 	User() *user.Service
-	Budget() *budget.Service
 	Plan() *plan.Service
 	Account() *account.Service
 	Category() *category.Service
@@ -59,7 +57,6 @@ func NewClientWithTokenProvider(tokenProvider api.TokenProvider) ClientServicer 
 	}
 
 	c.user = user.NewService(c)
-	c.budget = budget.NewService(c)
 	c.plan = plan.NewService(c)
 	c.account = account.NewService(c)
 	c.category = category.NewService(c)
@@ -81,7 +78,6 @@ type client struct {
 	rateLimiter *api.RateLimitTracker
 
 	user          *user.Service
-	budget        *budget.Service
 	plan          *plan.Service
 	account       *account.Service
 	category      *category.Service
@@ -100,11 +96,6 @@ func (c *client) WithHTTPClient(httpClient *http.Client) api.HTTPClientConfigure
 // User returns user.Service API instance
 func (c *client) User() *user.Service {
 	return c.user
-}
-
-// Budget returns budget.Service API instance
-func (c *client) Budget() *budget.Service {
-	return c.budget
 }
 
 // Plan returns plan.Service API instance

@@ -133,7 +133,7 @@ func ExampleImplicitGrantFlow_mobileApp() {
 	}
 
 	// Use client in mobile app
-	budgets, err := client.Budget().GetBudgets()
+	budgets, err := client.Plan().GetPlans()
 	if err != nil {
 		log.Fatal(err)
 	}

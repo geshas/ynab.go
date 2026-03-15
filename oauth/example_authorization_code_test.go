@@ -96,7 +96,7 @@ func ExampleAuthorizationCodeFlow_withBuilder() {
 	}
 
 	// Use client
-	budgets, err := client.Budget().GetBudgets()
+	budgets, err := client.Plan().GetPlans()
 	if err != nil {
 		log.Fatal(err)
 	}

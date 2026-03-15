@@ -17,9 +17,9 @@ type Service struct {
 	c api.ClientReaderWriter
 }
 
-// GetAccounts fetches the list of accounts from a budget
+// GetAccounts fetches the list of accounts from a plan
 // https://api.ynab.com/v1#/Accounts/getAccounts
-func (s *Service) GetAccounts(budgetID string, f *api.Filter) (*SearchResultSnapshot, error) {
+func (s *Service) GetAccounts(planID string, f *api.Filter) (*SearchResultSnapshot, error) {
 	resModel := struct {
 		Data struct {
 			Accounts        []*Account `json:"accounts"`
@@ -27,7 +27,7 @@ func (s *Service) GetAccounts(budgetID string, f *api.Filter) (*SearchResultSnap
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/budgets/%s/accounts", budgetID)
+	url := fmt.Sprintf("/plans/%s/accounts", planID)
 	if f != nil {
 		url = fmt.Sprintf("%s?%s", url, f.ToQuery())
 	}
@@ -41,25 +41,25 @@ func (s *Service) GetAccounts(budgetID string, f *api.Filter) (*SearchResultSnap
 	}, nil
 }
 
-// GetAccount fetches a specific account from a budget
+// GetAccount fetches a specific account from a plan
 // https://api.ynab.com/v1#/Accounts/getAccountById
-func (s *Service) GetAccount(budgetID, accountID string) (*Account, error) {
+func (s *Service) GetAccount(planID, accountID string) (*Account, error) {
 	resModel := struct {
 		Data struct {
 			Account *Account `json:"account"`
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/budgets/%s/accounts/%s", budgetID, accountID)
+	url := fmt.Sprintf("/plans/%s/accounts/%s", planID, accountID)
 	if err := s.c.GET(url, &resModel); err != nil {
 		return nil, err
 	}
 	return resModel.Data.Account, nil
 }
 
-// CreateAccount creates a new account in a budget
+// CreateAccount creates a new account in a plan
 // https://api.ynab.com/v1#/Accounts/createAccount
-func (s *Service) CreateAccount(budgetID string, p PayloadAccount) (*Account, error) {
+func (s *Service) CreateAccount(planID string, p PayloadAccount) (*Account, error) {
 	payload := struct {
 		Account *PayloadAccount `json:"account"`
 	}{
@@ -77,7 +77,7 @@ func (s *Service) CreateAccount(budgetID string, p PayloadAccount) (*Account, er
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/budgets/%s/accounts", budgetID)
+	url := fmt.Sprintf("/plans/%s/accounts", planID)
 	if err := s.c.POST(url, &resModel, buf); err != nil {
 		return nil, err
 	}

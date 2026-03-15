@@ -80,7 +80,7 @@ func Example_tokenBasedVsOAuth() {
 	clients := []ynab.ClientServicer{tokenClient, oauthClient}
 
 	for i, client := range clients {
-		budgets, err := client.Budget().GetBudgets()
+		budgets, err := client.Plan().GetPlans()
 		if err != nil {
 			log.Printf("Client %d error: %v", i+1, err)
 			continue
@@ -195,7 +195,7 @@ func Example_migration() {
 
 	// Function that works with either client type
 	useClient := func(client ynab.ClientServicer, name string) {
-		budgets, err := client.Budget().GetBudgets()
+		budgets, err := client.Plan().GetPlans()
 		if err != nil {
 			log.Printf("%s client error: %v", name, err)
 			return

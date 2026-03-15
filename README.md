@@ -92,7 +92,7 @@ func main() {
     fmt.Printf("Authenticated as: %s\n", user.ID)
 
     // Get budgets
-    budgets, err := client.Budget().GetBudgets()
+    budgets, err := client.Plan().GetPlans()
     if err != nil {
         log.Fatal(err)
     }
@@ -105,7 +105,7 @@ func main() {
 
 ### Option 2: Personal Access Token (Simple)
 
-For personal scripts or development, you can use a static access token from your [YNAB account settings](https://app.youneedabudget.com/settings).
+For personal scripts or development, you can use a static access token from your [YNAB account settings](https://app.ynab.com/settings).
 
 ```go
 package main
@@ -118,11 +118,11 @@ import (
 )
 
 func main() {
-    // Get your personal access token from https://app.youneedabudget.com/settings
+    // Get your personal access token from https://app.ynab.com/settings
     const accessToken = "your-personal-access-token"
 
     client := ynab.NewClient(accessToken)
-    budgets, err := client.Budget().GetBudgets()
+    budgets, err := client.Plan().GetPlans()
     if err != nil {
         log.Fatal(err)
     }
@@ -232,7 +232,7 @@ client, err := ynab.NewOAuthClientFromToken(config, token)
 For personal scripts, development, or simple integrations:
 
 ```go
-// Get token from https://app.youneedabudget.com/settings
+// Get token from https://app.ynab.com/settings
 client := ynab.NewClient("your-personal-access-token")
 ```
 
@@ -242,49 +242,49 @@ client := ynab.NewClient("your-personal-access-token")
 
 ```go
 // List all budgets
-budgets, err := client.Budget().GetBudgets()
+budgets, err := client.Plan().GetPlans()
 if err != nil {
     log.Fatal(err)
 }
 
 // Get detailed budget with all data
-budget, err := client.Budget().GetBudget("budget-id", nil)
+budget, err := client.Plan().GetPlan("plan-id", nil)
 if err != nil {
     log.Fatal(err)
 }
 
 // Get budget settings
-settings, err := client.Budget().GetBudgetSettings("budget-id")
+settings, err := client.Plan().GetPlanSettings("plan-id")
 ```
 
 ### Working with Accounts
 
 ```go
 // Get all accounts
-accounts, err := client.Account().GetAccounts("budget-id", nil)
+accounts, err := client.Account().GetAccounts("plan-id", nil)
 
 // Get specific account
-account, err := client.Account().GetAccount("budget-id", "account-id")
+account, err := client.Account().GetAccount("plan-id", "account-id")
 
 // Create new account
 newAccount := account.PayloadAccount{
     Name: "Emergency Fund",
     Type: account.TypeSavings,
 }
-createdAccount, err := client.Account().CreateAccount("budget-id", newAccount)
+createdAccount, err := client.Account().CreateAccount("plan-id", newAccount)
 ```
 
 ### Working with Transactions
 
 ```go
 // Get all transactions
-transactions, err := client.Transaction().GetTransactions("budget-id", nil)
+transactions, err := client.Transaction().GetTransactions("plan-id", nil)
 
 // Get transactions with filtering
 filter := &api.Filter{
     SinceDate: api.Date(time.Now().AddDate(0, -1, 0)), // Last month
 }
-transactions, err := client.Transaction().GetTransactions("budget-id", filter)
+transactions, err := client.Transaction().GetTransactions("plan-id", filter)
 
 // Create new transaction
 newTransaction := transaction.PayloadTransaction{
@@ -294,25 +294,25 @@ newTransaction := transaction.PayloadTransaction{
     Amount:     -25000, // $250.00 (milliunits)
     Memo:       "Coffee shop",
 }
-created, err := client.Transaction().CreateTransaction("budget-id", newTransaction)
+created, err := client.Transaction().CreateTransaction("plan-id", newTransaction)
 
 // Update transaction
-updated, err := client.Transaction().UpdateTransaction("budget-id", "transaction-id", transaction.PayloadTransaction{
+updated, err := client.Transaction().UpdateTransaction("plan-id", "transaction-id", transaction.PayloadTransaction{
     Amount: -30000, // $300.00
 })
 
 // Delete transaction
-err = client.Transaction().DeleteTransaction("budget-id", "transaction-id")
+err = client.Transaction().DeleteTransaction("plan-id", "transaction-id")
 ```
 
 ### Working with Categories
 
 ```go
 // Get all categories
-categories, err := client.Category().GetCategories("budget-id", nil)
+categories, err := client.Category().GetCategories("plan-id", nil)
 
 // Update category budget
-err = client.Category().UpdateCategoryForCurrentMonth("budget-id", "category-id", category.PayloadMonthCategory{
+err = client.Category().UpdateCategoryForCurrentMonth("plan-id", "category-id", category.PayloadMonthCategory{
     Budgeted: 50000, // $500.00
 })
 ```
@@ -358,7 +358,7 @@ if err != nil {
 }
 
 // All subsequent API calls use the new token
-budgets, err := client.Budget().GetBudgets()
+budgets, err := client.Plan().GetPlans()
 
 // Check current token
 currentToken := client.GetAccessTokenString()
@@ -380,7 +380,7 @@ client := ynab.NewClient("initial-token")
 // Goroutine 1: Making API calls
 go func() {
     for {
-        budgets, err := client.Budget().GetBudgets()
+        budgets, err := client.Plan().GetPlans()
         if err != nil {
             log.Printf("API error: %v", err)
         }
@@ -493,7 +493,7 @@ client = ynab.NewOAuthClient(config, tokenManager)
 client.SetAccessToken("new-token")    // Works for static, errors for OAuth
 client.GetAccessTokenString()         // Works for both
 client.IsAuthenticated()              // Works for both
-client.Budget().GetBudgets()          // Works for both
+client.Plan().GetPlans()          // Works for both
 ```
 
 ## Error Handling
@@ -621,11 +621,11 @@ if apiErr.IsRetryable() {
 ### Production-Ready Retry Logic
 
 ```go
-func makeRequestWithRetry(client ynab.ClientServicer, budgetID string) ([]*budget.Budget, error) {
+func makeRequestWithRetry(client ynab.ClientServicer, planID string) ([]*budget.Budget, error) {
     maxRetries := 3
     
     for attempt := 0; attempt <= maxRetries; attempt++ {
-        budgets, err := client.Budget().GetBudgets()
+        budgets, err := client.Plan().GetPlans()
         if err == nil {
             return budgets, nil
         }
@@ -664,8 +664,8 @@ func makeRequestWithRetry(client ynab.ClientServicer, budgetID string) ([]*budge
 ### Complete Error Handling Example
 
 ```go
-func comprehensiveErrorHandling(client ynab.ClientServicer, budgetID string) error {
-    budget, err := client.Budget().GetBudget(budgetID, nil)
+func comprehensiveErrorHandling(client ynab.ClientServicer, planID string) error {
+    budget, err := client.Plan().GetPlan(planID, nil)
     if err != nil {
         if apiErr, ok := err.(*api.Error); ok {
             switch {
@@ -676,7 +676,7 @@ func comprehensiveErrorHandling(client ynab.ClientServicer, budgetID string) err
             case apiErr.IsRateLimit():
                 return handleRateLimit(client, apiErr)
             case apiErr.IsNotFound():
-                return fmt.Errorf("budget %s not found", budgetID)
+                return fmt.Errorf("budget %s not found", planID)
             case apiErr.IsValidationError():
                 return fmt.Errorf("invalid request: %s", apiErr.Detail)
             case apiErr.IsRetryable():
@@ -790,7 +790,7 @@ func handleDashboard(w http.ResponseWriter, r *http.Request) {
     token := getUserToken(userID)
     
     client, _ := ynab.NewOAuthClientFromToken(config, token)
-    budgets, _ := client.Budget().GetBudgets()
+    budgets, _ := client.Plan().GetPlans()
     
     // Render dashboard with budgets...
 }
@@ -845,7 +845,7 @@ YNAB enforces **200 requests per hour per access token** using a rolling window.
 ### Handling 429 Errors
 
 ```go
-budgets, err := client.Budget().GetBudgets()
+budgets, err := client.Plan().GetPlans()
 if err != nil {
     if apiErr, ok := err.(*api.Error); ok && apiErr.ID == "429" {
         log.Println("Rate limited! Try again later or use delta requests")
@@ -862,7 +862,7 @@ Rate limiting is now built into all YNAB clients - no manual tracking needed:
 client := ynab.NewClient("your-token")
 
 // Make API calls - rate limiting is automatic!
-budgets, err := client.Budget().GetBudgets()
+budgets, err := client.Plan().GetPlans()
 if err != nil {
     if apiErr, ok := err.(*api.Error); ok && apiErr.ID == "429" {
         // Wait for rate limit to reset
@@ -903,7 +903,7 @@ if client.RequestsRemaining() < len(transactions) {
 
 // Now proceed with batch operation
 for _, tx := range transactions {
-    _, err := client.Transaction().CreateTransaction(budgetID, tx)
+    _, err := client.Transaction().CreateTransaction(planID, tx)
     // Rate limiting is tracked automatically
 }
 ```
@@ -913,21 +913,21 @@ for _, tx := range transactions {
 **Use delta requests** to fetch only changes:
 ```go
 // Get full data first
-snapshot, _ := client.Budget().GetBudget(budgetID, nil)
+snapshot, _ := client.Plan().GetPlan(planID, nil)
 
 // Later, get only changes
 filter := &api.Filter{LastKnowledgeOfServer: snapshot.ServerKnowledge}
-changes, _ := client.Budget().GetBudget(budgetID, filter)
+changes, _ := client.Plan().GetPlan(planID, filter)
 ```
 
 **Use batch operations** instead of individual calls:
 ```go
 // Good: 1 request
-client.Transaction().CreateTransactions(budgetID, transactions)
+client.Transaction().CreateTransactions(planID, transactions)
 
 // Bad: N requests  
 for _, tx := range transactions {
-    client.Transaction().CreateTransaction(budgetID, tx)
+    client.Transaction().CreateTransaction(planID, tx)
 }
 ```
 

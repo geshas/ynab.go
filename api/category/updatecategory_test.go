@@ -24,7 +24,7 @@ func TestService_UpdateCategory(t *testing.T) {
 		GoalTarget: &newGoalTarget,
 	}
 
-	url := "https://api.ynab.com/v1/budgets/aa248caa-eed7-4575-a990-717386438d2c/categories/13419c12-78d3-4a26-82ca-1cde7aa1d6f8"
+	url := "https://api.ynab.com/v1/plans/aa248caa-eed7-4575-a990-717386438d2c/categories/13419c12-78d3-4a26-82ca-1cde7aa1d6f8"
 	httpmock.RegisterResponder(http.MethodPatch, url,
 		func(req *http.Request) (*http.Response, error) {
 			resModel := struct {

@@ -9,7 +9,6 @@ import (
 
 	"github.com/geshas/ynab.go/api"
 	"github.com/geshas/ynab.go/api/account"
-	"github.com/geshas/ynab.go/api/budget"
 	"github.com/geshas/ynab.go/api/category"
 	"github.com/geshas/ynab.go/api/money_movement"
 	"github.com/geshas/ynab.go/api/month"
@@ -31,7 +30,6 @@ type OAuthClient struct {
 
 	// Service instances
 	user          *user.Service
-	budget        *budget.Service
 	plan          *plan.Service
 	account       *account.Service
 	category      *category.Service
@@ -52,7 +50,6 @@ func NewOAuthClient(config *Config, tokenManager *TokenManager) *OAuthClient {
 
 	// Initialize services
 	client.user = user.NewService(client)
-	client.budget = budget.NewService(client)
 	client.plan = plan.NewService(client)
 	client.account = account.NewService(client)
 	client.category = category.NewService(client)
@@ -134,11 +131,6 @@ func (c *OAuthClient) ClearToken() error {
 // User returns user.Service API instance
 func (c *OAuthClient) User() *user.Service {
 	return c.user
-}
-
-// Budget returns budget.Service API instance
-func (c *OAuthClient) Budget() *budget.Service {
-	return c.budget
 }
 
 // Plan returns plan.Service API instance

@@ -74,7 +74,7 @@ func TestOAuthClient_ServiceGetters(t *testing.T) {
 
 	// Test all service getters
 	assert.NotNil(t, client.User())
-	assert.NotNil(t, client.Budget())
+	assert.NotNil(t, client.Plan())
 	assert.NotNil(t, client.Account())
 	assert.NotNil(t, client.Category())
 	assert.NotNil(t, client.Month())
