@@ -43,7 +43,8 @@ func TestService_GetMoneyMovements(t *testing.T) {
         "type": "withdrawal",
         "isrenamed": false
       }
-    ]
+    ],
+    "server_knowledge": 0
   }
 }`)
 				return res, nil
@@ -72,7 +73,8 @@ func TestService_GetMoneyMovements(t *testing.T) {
 			func(req *http.Request) (*http.Response, error) {
 				res := httpmock.NewStringResponse(200, `{
   "data": {
-    "money_movements": []
+    "money_movements": [],
+    "server_knowledge": 0
   }
 }`)
 				return res, nil
