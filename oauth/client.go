@@ -11,8 +11,10 @@ import (
 	"github.com/geshas/ynab.go/api/account"
 	"github.com/geshas/ynab.go/api/budget"
 	"github.com/geshas/ynab.go/api/category"
+	"github.com/geshas/ynab.go/api/money_movement"
 	"github.com/geshas/ynab.go/api/month"
 	"github.com/geshas/ynab.go/api/payee"
+	"github.com/geshas/ynab.go/api/plan"
 	"github.com/geshas/ynab.go/api/transaction"
 	"github.com/geshas/ynab.go/api/user"
 )
@@ -28,13 +30,15 @@ type OAuthClient struct {
 	rateLimiter *api.RateLimitTracker
 
 	// Service instances
-	user        *user.Service
-	budget      *budget.Service
-	account     *account.Service
-	category    *category.Service
-	payee       *payee.Service
-	month       *month.Service
-	transaction *transaction.Service
+	user          *user.Service
+	budget        *budget.Service
+	plan          *plan.Service
+	account       *account.Service
+	category      *category.Service
+	payee         *payee.Service
+	month         *month.Service
+	transaction   *transaction.Service
+	moneyMovement *money_movement.Service
 }
 
 // NewOAuthClient creates a new OAuth-enabled YNAB client
@@ -49,11 +53,13 @@ func NewOAuthClient(config *Config, tokenManager *TokenManager) *OAuthClient {
 	// Initialize services
 	client.user = user.NewService(client)
 	client.budget = budget.NewService(client)
+	client.plan = plan.NewService(client)
 	client.account = account.NewService(client)
 	client.category = category.NewService(client)
 	client.payee = payee.NewService(client)
 	client.month = month.NewService(client)
 	client.transaction = transaction.NewService(client)
+	client.moneyMovement = money_movement.NewService(client)
 
 	return client
 }
@@ -135,6 +141,11 @@ func (c *OAuthClient) Budget() *budget.Service {
 	return c.budget
 }
 
+// Plan returns plan.Service API instance
+func (c *OAuthClient) Plan() *plan.Service {
+	return c.plan
+}
+
 // Account returns account.Service API instance
 func (c *OAuthClient) Account() *account.Service {
 	return c.account
@@ -158,6 +169,11 @@ func (c *OAuthClient) Month() *month.Service {
 // Transaction returns transaction.Service API instance
 func (c *OAuthClient) Transaction() *transaction.Service {
 	return c.transaction
+}
+
+// MoneyMovement returns money_movement.Service API instance
+func (c *OAuthClient) MoneyMovement() *money_movement.Service {
+	return c.moneyMovement
 }
 
 // RequestsRemaining returns how many requests can be made before hitting the rate limit
