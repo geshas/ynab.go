@@ -1,0 +1,23 @@
+oauth/client.go
+  05b04c894466468e 14,17,35,40-41,56,62,144-148,174-178
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.12",
+  "base_commit_sha": "112aeb6f8b445f724c36cebb00ab5f7b78cf3f94",
+  "prompts": {
+    "05b04c894466468e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_30ccc2083ffeoL0vcYCAjXmPwp",
+        "model": "opencode/minimax-m2.5-free"
+      },
+      "human_author": "Evgeny <evgeny@example.com>",
+      "messages": [],
+      "total_additions": 23,
+      "total_deletions": 7,
+      "accepted_lines": 17,
+      "overriden_lines": 0
+    }
+  }
+}
