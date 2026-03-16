@@ -22,8 +22,7 @@ type PayloadCreateCategory struct {
 
 // PayloadCreateCategoryGroup is the payload contract for creating a category group
 type PayloadCreateCategoryGroup struct {
-	Name string  `json:"name"`
-	Note *string `json:"note,omitempty"`
+	Name string `json:"name"`
 }
 
 // PayloadUpdateCategoryGroup is the payload contract for updating a category group
