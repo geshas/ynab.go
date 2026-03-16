@@ -621,7 +621,7 @@ if apiErr.IsRetryable() {
 ### Production-Ready Retry Logic
 
 ```go
-func makeRequestWithRetry(client ynab.ClientServicer, planID string) ([]*plans.Plan, error) {
+func makeRequestWithRetry(client ynab.ClientServicer, planID string) ([]*plan.Summary, error) {
     maxRetries := 3
     
     for attempt := 0; attempt <= maxRetries; attempt++ {
