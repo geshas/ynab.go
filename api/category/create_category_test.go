@@ -230,7 +230,9 @@ func TestService_UpdateCategoryGroup(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		payload := category.PayloadUpdateCategoryGroup{}
+		payload := category.PayloadUpdateCategoryGroup{
+			Name: "Updated Category Group",
+		}
 
 		url := "https://api.ynab.com/v1/plans/plan-id-123/category_groups/group-456"
 		httpmock.RegisterResponder(http.MethodPatch, url,
