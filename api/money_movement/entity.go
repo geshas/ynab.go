@@ -8,7 +8,6 @@ import (
 
 // MoneyMovement represents a money movement
 type MoneyMovement struct {
-	// Fields that are part of the documented MoneyMovement schema
 	ID                   string     `json:"id"`
 	Month                *api.Date  `json:"month"`
 	MovedAt              *time.Time `json:"moved_at"`
@@ -18,25 +17,6 @@ type MoneyMovement struct {
 	FromCategoryID       string     `json:"from_category_id"`
 	ToCategoryID         string     `json:"to_category_id"`
 	Amount               int64      `json:"amount"`
-
-	// Legacy/internal fields that should not be (un)marshalled for the
-	// documented MoneyMovement API schema.
-	CategoryID            string    `json:"-"`
-	CategoryName          string    `json:"-"`
-	Date                  *api.Date `json:"-"`
-	PayeeID               *string   `json:"-"`
-	PayeeName             *string   `json:"-"`
-	RecurringJobID        *string   `json:"-"`
-	RecurringJobType      *string   `json:"-"`
-	ScheduledFlag         bool      `json:"-"`
-	Approved              bool      `json:"-"`
-	FlagColor             *string   `json:"-"`
-	TransferAccountID     *string   `json:"-"`
-	TransferTransactionID *string   `json:"-"`
-	MatchedTransactionID  *string   `json:"-"`
-	ImportID              *string   `json:"-"`
-	Type                  string    `json:"-"`
-	Isrenamed             bool      `json:"-"`
 }
 
 // MoneyMovementGroup represents a group of money movements
