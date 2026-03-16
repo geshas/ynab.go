@@ -80,6 +80,7 @@ func TestOAuthClient_ServiceGetters(t *testing.T) {
 	assert.NotNil(t, client.Month())
 	assert.NotNil(t, client.Payee())
 	assert.NotNil(t, client.Transaction())
+	assert.NotNil(t, client.MoneyMovement())
 }
 
 func TestOAuthClient_RateLimiting(t *testing.T) {
