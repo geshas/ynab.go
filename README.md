@@ -676,7 +676,7 @@ func comprehensiveErrorHandling(client ynab.ClientServicer, planID string) error
             case apiErr.IsRateLimit():
                 return handleRateLimit(client, apiErr)
             case apiErr.IsNotFound():
-                return fmt.Errorf("budget %s not found", planID)
+                return fmt.Errorf("plan %s not found", planID)
             case apiErr.IsValidationError():
                 return fmt.Errorf("invalid request: %s", apiErr.Detail)
             case apiErr.IsRetryable():
@@ -688,7 +688,7 @@ func comprehensiveErrorHandling(client ynab.ClientServicer, planID string) error
         return fmt.Errorf("request failed: %v", err)
     }
     
-    log.Printf("Successfully retrieved budget: %s", budget.Name)
+    log.Printf("Successfully retrieved plan: %s", budget.Name)
     return nil
 }
 ```
