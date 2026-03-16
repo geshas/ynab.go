@@ -1,0 +1,25 @@
+api/money_movement/service_test.go
+  05b04c894466468e 27-34,44,46-47,49-52,91-98,108,110-111,130-131,135-142,154,156,158-159,179,181,215,217-218
+api/category/payload.go
+  05b04c894466468e 26,31-32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.12",
+  "base_commit_sha": "a91ba0d1fe7e2c574fd863dccba2f4f83536f23f",
+  "prompts": {
+    "05b04c894466468e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_30ccc2083ffeoL0vcYCAjXmPwp",
+        "model": "opencode/minimax-m2.5-free"
+      },
+      "human_author": "Evgeny <evgeny@example.com>",
+      "messages": [],
+      "total_additions": 76,
+      "total_deletions": 134,
+      "accepted_lines": 58,
+      "overriden_lines": 0
+    }
+  }
+}
