@@ -13,9 +13,10 @@ type MoneyMovement struct {
 	Month                *api.Date  `json:"month"`
 	MovedAt              *time.Time `json:"moved_at"`
 	Note                 string     `json:"note"`
+	MoneyMovementGroupID string     `json:"money_movement_group_id"`
+	PerformedByUserID    string     `json:"performed_by_user_id"`
 	FromCategoryID       string     `json:"from_category_id"`
 	ToCategoryID         string     `json:"to_category_id"`
-	MoneyMovementGroupID string     `json:"money_movement_group_id"`
 	Amount               int64      `json:"amount"`
 
 	// Legacy/internal fields that should not be (un)marshalled for the
@@ -40,9 +41,9 @@ type MoneyMovement struct {
 
 // MoneyMovementGroup represents a group of money movements
 type MoneyMovementGroup struct {
-	GroupCreatedAt    time.Time        `json:"group_created_at"`
-	Month             *api.Date        `json:"month"`
-	Note              *string          `json:"note"`
-	PerformedByUserID string           `json:"performed_by_user_id"`
-	MoneyMovements    []*MoneyMovement `json:"money_movements"`
+	ID                string    `json:"id"`
+	GroupCreatedAt    time.Time `json:"group_created_at"`
+	Month             *api.Date `json:"month"`
+	Note              string    `json:"note"`
+	PerformedByUserID string    `json:"performed_by_user_id"`
 }

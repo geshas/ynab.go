@@ -37,8 +37,9 @@ type Plan struct {
 
 // Summary represents the summary of a plan
 type Summary struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID       string             `json:"id"`
+	Name     string             `json:"name"`
+	Accounts []*account.Account `json:"accounts"`
 
 	DateFormat     *DateFormat     `json:"date_format"`
 	CurrencyFormat *CurrencyFormat `json:"currency_format"`
