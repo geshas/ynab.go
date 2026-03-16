@@ -109,10 +109,8 @@ func TestService_CreateCategoryGroup(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		note := "Test group note"
 		payload := category.PayloadCreateCategoryGroup{
 			Name: "New Category Group",
-			Note: &note,
 		}
 
 		url := "https://api.ynab.com/v1/plans/plan-id-123/category_groups"
