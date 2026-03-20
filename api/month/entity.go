@@ -1,9 +1,9 @@
 // Package month implements month entities and services
-package month // import "github.com/coltoneshaw/ynab.go/api/month"
+package month // import "github.com/geshas/ynab.go/api/month"
 
 import (
-	"github.com/coltoneshaw/ynab.go/api"
-	"github.com/coltoneshaw/ynab.go/api/category"
+	"github.com/geshas/ynab.go/api"
+	"github.com/geshas/ynab.go/api/category"
 )
 
 // Month represents a month for a budget

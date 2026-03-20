@@ -3,7 +3,7 @@ package month
 import (
 	"fmt"
 
-	"github.com/coltoneshaw/ynab.go/api"
+	"github.com/geshas/ynab.go/api"
 )
 
 // NewService facilitates the creation of a new month service instance
@@ -16,9 +16,9 @@ type Service struct {
 	c api.ClientReader
 }
 
-// GetMonths fetches the list of months from a budget
-// https://api.youneedabudget.com/v1#/Months/getBudgetMonths
-func (s *Service) GetMonths(budgetID string, f *api.Filter) (*SearchResultSnapshot, error) {
+// GetMonths fetches the list of months from a plan
+// https://api.ynab.com/v1#/Months/getBudgetMonths
+func (s *Service) GetMonths(planID string, f *api.Filter) (*SearchResultSnapshot, error) {
 	resModel := struct {
 		Data struct {
 			Months          []*Summary `json:"months"`
@@ -26,7 +26,7 @@ func (s *Service) GetMonths(budgetID string, f *api.Filter) (*SearchResultSnapsh
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/budgets/%s/months", budgetID)
+	url := fmt.Sprintf("/plans/%s/months", planID)
 	if f != nil {
 		url = fmt.Sprintf("%s?%s", url, f.ToQuery())
 	}
@@ -40,16 +40,16 @@ func (s *Service) GetMonths(budgetID string, f *api.Filter) (*SearchResultSnapsh
 	}, nil
 }
 
-// GetMonth fetches a specific month from a budget
-// https://api.youneedabudget.com/v1#/Months/getBudgetMonth
-func (s *Service) GetMonth(budgetID string, month api.Date) (*Month, error) {
+// GetMonth fetches a specific month from a plan
+// https://api.ynab.com/v1#/Months/getBudgetMonth
+func (s *Service) GetMonth(planID string, month api.Date) (*Month, error) {
 	resModel := struct {
 		Data struct {
 			Month *Month `json:"month"`
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/budgets/%s/months/%s", budgetID,
+	url := fmt.Sprintf("/plans/%s/months/%s", planID,
 		api.DateFormat(month))
 	if err := s.c.GET(url, &resModel); err != nil {
 		return nil, err

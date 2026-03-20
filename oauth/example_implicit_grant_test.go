@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/coltoneshaw/ynab.go"
-	"github.com/coltoneshaw/ynab.go/oauth"
+	"github.com/geshas/ynab.go"
+	"github.com/geshas/ynab.go/oauth"
 )
 
 func ExampleImplicitGrantFlow() {
@@ -133,7 +133,7 @@ func ExampleImplicitGrantFlow_mobileApp() {
 	}
 
 	// Use client in mobile app
-	budgets, err := client.Budget().GetBudgets()
+	budgets, err := client.Plan().GetPlans()
 	if err != nil {
 		log.Fatal(err)
 	}

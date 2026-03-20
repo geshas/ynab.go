@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-const APIEndpoint = "https://api.youneedabudget.com/v1"
+const APIEndpoint = "https://api.ynab.com/v1"
 
 // HTTPClient represents a configurable HTTP client
 type HTTPClient struct {

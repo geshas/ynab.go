@@ -8,16 +8,16 @@ import (
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/jarcoal/httpmock.v1"
 
-	"github.com/coltoneshaw/ynab.go"
-	"github.com/coltoneshaw/ynab.go/api"
-	"github.com/coltoneshaw/ynab.go/api/category"
+	"github.com/geshas/ynab.go"
+	"github.com/geshas/ynab.go/api"
+	"github.com/geshas/ynab.go/api/category"
 )
 
 func TestService_GetCategories(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	url := "https://api.youneedabudget.com/v1/budgets/aa248caa-eed7-4575-a990-717386438d2c/categories"
+	url := "https://api.ynab.com/v1/plans/aa248caa-eed7-4575-a990-717386438d2c/categories"
 	httpmock.RegisterResponder(http.MethodGet, url,
 		func(req *http.Request) (*http.Response, error) {
 			res := httpmock.NewStringResponse(200, `{
@@ -107,7 +107,7 @@ func TestService_GetCategory(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	url := "https://api.youneedabudget.com/v1/budgets/aa248caa-eed7-4575-a990-717386438d2c/categories/13419c12-78d3-4a26-82ca-1cde7aa1d6f8"
+	url := "https://api.ynab.com/v1/plans/aa248caa-eed7-4575-a990-717386438d2c/categories/13419c12-78d3-4a26-82ca-1cde7aa1d6f8"
 	httpmock.RegisterResponder(http.MethodGet, url,
 		func(req *http.Request) (*http.Response, error) {
 			res := httpmock.NewStringResponse(200, `{
@@ -174,7 +174,7 @@ func TestService_GetCategoryForMonth(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	url := "https://api.youneedabudget.com/v1/budgets/aa248caa-eed7-4575-a990-717386438d2c/months/2018-01-01/categories/13419c12-78d3-4a26-82ca-1cde7aa1d6f8"
+	url := "https://api.ynab.com/v1/plans/aa248caa-eed7-4575-a990-717386438d2c/months/2018-01-01/categories/13419c12-78d3-4a26-82ca-1cde7aa1d6f8"
 	httpmock.RegisterResponder(http.MethodGet, url,
 		func(req *http.Request) (*http.Response, error) {
 			res := httpmock.NewStringResponse(200, `{
@@ -245,7 +245,7 @@ func TestService_GetCategoryForCurrentMonth(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	url := "https://api.youneedabudget.com/v1/budgets/aa248caa-eed7-4575-a990-717386438d2c/months/current/categories/13419c12-78d3-4a26-82ca-1cde7aa1d6f8"
+	url := "https://api.ynab.com/v1/plans/aa248caa-eed7-4575-a990-717386438d2c/months/current/categories/13419c12-78d3-4a26-82ca-1cde7aa1d6f8"
 	httpmock.RegisterResponder(http.MethodGet, url,
 		func(req *http.Request) (*http.Response, error) {
 			res := httpmock.NewStringResponse(200, `{
@@ -316,7 +316,7 @@ func TestService_UpdateCategoryForMonth(t *testing.T) {
 		Budgeted: 1000,
 	}
 
-	url := "https://api.youneedabudget.com/v1/budgets/aa248caa-eed7-4575-a990-717386438d2c/months/0001-01-01/categories/13419c12-78d3-4a26-82ca-1cde7aa1d6f8"
+	url := "https://api.ynab.com/v1/plans/aa248caa-eed7-4575-a990-717386438d2c/months/0001-01-01/categories/13419c12-78d3-4a26-82ca-1cde7aa1d6f8"
 	httpmock.RegisterResponder(http.MethodPatch, url,
 		func(req *http.Request) (*http.Response, error) {
 			resModel := struct {
@@ -396,7 +396,7 @@ func TestService_UpdateCategoryForCurrentMonth(t *testing.T) {
 		Budgeted: 1000,
 	}
 
-	url := "https://api.youneedabudget.com/v1/budgets/aa248caa-eed7-4575-a990-717386438d2c/months/current/categories/13419c12-78d3-4a26-82ca-1cde7aa1d6f8"
+	url := "https://api.ynab.com/v1/plans/aa248caa-eed7-4575-a990-717386438d2c/months/current/categories/13419c12-78d3-4a26-82ca-1cde7aa1d6f8"
 	httpmock.RegisterResponder(http.MethodPatch, url,
 		func(req *http.Request) (*http.Response, error) {
 			resModel := struct {

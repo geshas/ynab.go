@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/coltoneshaw/ynab.go"
+	"github.com/geshas/ynab.go"
 )
 
 func ExampleNewClient() {
@@ -28,12 +28,12 @@ func ExampleClientServicer_Account() {
 	// Output: *account.Service
 }
 
-func ExampleClientServicer_Budget() {
+func ExampleClientServicer_Plan() {
 	c := ynab.NewClient("<valid_ynab_access_token>")
-	s := c.Budget()
+	s := c.Plan()
 	fmt.Println(reflect.TypeOf(s))
 
-	// Output: *budget.Service
+	// Output: *plan.Service
 }
 
 func ExampleClientServicer_Category() {

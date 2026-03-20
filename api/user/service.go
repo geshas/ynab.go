@@ -1,7 +1,7 @@
 package user
 
 import (
-	"github.com/coltoneshaw/ynab.go/api"
+	"github.com/geshas/ynab.go/api"
 )
 
 // NewService facilitates the creation of a new user service instance
@@ -15,7 +15,7 @@ type Service struct {
 }
 
 // GetUser fetches information about the authenticated user
-// https://api.youneedabudget.com/v1#/User/getUser
+// https://api.ynab.com/v1#/User/getUser
 func (s *Service) GetUser() (*User, error) {
 	resModel := struct {
 		Data struct {

@@ -1,7 +1,7 @@
 // Package category implements category entities and services
-package category // import "github.com/coltoneshaw/ynab.go/api/category"
+package category // import "github.com/geshas/ynab.go/api/category"
 
-import "github.com/coltoneshaw/ynab.go/api"
+import "github.com/geshas/ynab.go/api"
 
 // Category represents a category for a budget
 type Category struct {

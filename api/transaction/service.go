@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/coltoneshaw/ynab.go/api"
+	"github.com/geshas/ynab.go/api"
 )
 
 // NewService facilitates the creation of a new transaction service instance
@@ -26,8 +26,8 @@ type SearchResultSnapshot struct {
 
 // GetTransactions fetches the list of transactions from
 // a budget with filtering capabilities
-// https://api.youneedabudget.com/v1#/Transactions/getTransactions
-func (s *Service) GetTransactions(budgetID string, f *Filter) (*SearchResultSnapshot, error) {
+// https://api.ynab.com/v1#/Transactions/getTransactions
+func (s *Service) GetTransactions(planID string, f *Filter) (*SearchResultSnapshot, error) {
 	resModel := struct {
 		Data struct {
 			Transactions    []*Transaction `json:"transactions"`
@@ -35,7 +35,7 @@ func (s *Service) GetTransactions(budgetID string, f *Filter) (*SearchResultSnap
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/budgets/%s/transactions", budgetID)
+	url := fmt.Sprintf("/plans/%s/transactions", planID)
 	if f != nil {
 		url = fmt.Sprintf("%s?%s", url, f.ToQuery())
 	}
@@ -50,33 +50,33 @@ func (s *Service) GetTransactions(budgetID string, f *Filter) (*SearchResultSnap
 	}, nil
 }
 
-// GetTransaction fetches a specific transaction from a budget
-// https://api.youneedabudget.com/v1#/Transactions/getTransactionsById
-func (s *Service) GetTransaction(budgetID, transactionID string) (*Transaction, error) {
+// GetTransaction fetches a specific transaction from a plan
+// https://api.ynab.com/v1#/Transactions/getTransactionsById
+func (s *Service) GetTransaction(planID, transactionID string) (*Transaction, error) {
 	resModel := struct {
 		Data struct {
 			Transaction *Transaction `json:"transaction"`
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/budgets/%s/transactions/%s", budgetID, transactionID)
+	url := fmt.Sprintf("/plans/%s/transactions/%s", planID, transactionID)
 	if err := s.c.GET(url, &resModel); err != nil {
 		return nil, err
 	}
 	return resModel.Data.Transaction, nil
 }
 
-// CreateTransaction creates a new transaction for a budget
-// https://api.youneedabudget.com/v1#/Transactions/createTransaction
-func (s *Service) CreateTransaction(budgetID string,
+// CreateTransaction creates a new transaction for a plan
+// https://api.ynab.com/v1#/Transactions/createTransaction
+func (s *Service) CreateTransaction(planID string,
 	p PayloadTransaction) (*OperationSummary, error) {
 
-	return s.CreateTransactions(budgetID, []PayloadTransaction{p})
+	return s.CreateTransactions(planID, []PayloadTransaction{p})
 }
 
-// CreateTransactions creates one or more new transactions for a budget
-// https://api.youneedabudget.com/v1#/Transactions/createTransaction
-func (s *Service) CreateTransactions(budgetID string,
+// CreateTransactions creates one or more new transactions for a plan
+// https://api.ynab.com/v1#/Transactions/createTransaction
+func (s *Service) CreateTransactions(planID string,
 	p []PayloadTransaction) (*OperationSummary, error) {
 
 	payload := struct {
@@ -94,7 +94,7 @@ func (s *Service) CreateTransactions(budgetID string,
 		Data *OperationSummary `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/budgets/%s/transactions", budgetID)
+	url := fmt.Sprintf("/plans/%s/transactions", planID)
 	err = s.c.POST(url, &resModel, buf)
 	if err != nil {
 		return nil, err
@@ -102,10 +102,10 @@ func (s *Service) CreateTransactions(budgetID string,
 	return resModel.Data, nil
 }
 
-// BulkCreateTransactions creates multiple transactions for a budget
-// https://api.youneedabudget.com/v1#/Transactions/bulkCreateTransactions
+// BulkCreateTransactions creates multiple transactions for a plan
+// https://api.ynab.com/v1#/Transactions/bulkCreateTransactions
 // Deprecated: Use transaction.CreateTransactions instead.
-func (s *Service) BulkCreateTransactions(budgetID string,
+func (s *Service) BulkCreateTransactions(planID string,
 	ps []PayloadTransaction) (*Bulk, error) {
 
 	payload := struct {
@@ -125,7 +125,7 @@ func (s *Service) BulkCreateTransactions(budgetID string,
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/budgets/%s/transactions/bulk", budgetID)
+	url := fmt.Sprintf("/plans/%s/transactions/bulk", planID)
 	if err := s.c.POST(url, &resModel, buf); err != nil {
 		return nil, err
 	}
@@ -133,8 +133,8 @@ func (s *Service) BulkCreateTransactions(budgetID string,
 }
 
 // UpdateTransaction updates a whole transaction for a replacement
-// https://api.youneedabudget.com/v1#/Transactions/updateTransaction
-func (s *Service) UpdateTransaction(budgetID, transactionID string,
+// https://api.ynab.com/v1#/Transactions/updateTransaction
+func (s *Service) UpdateTransaction(planID, transactionID string,
 	p PayloadTransaction) (*Transaction, error) {
 
 	payload := struct {
@@ -154,16 +154,16 @@ func (s *Service) UpdateTransaction(budgetID, transactionID string,
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/budgets/%s/transactions/%s", budgetID, transactionID)
+	url := fmt.Sprintf("/plans/%s/transactions/%s", planID, transactionID)
 	if err := s.c.PUT(url, &resModel, buf); err != nil {
 		return nil, err
 	}
 	return resModel.Data.Transaction, nil
 }
 
-// UpdateTransactions creates one or more new transactions for a budget
-// https://api.youneedabudget.com/v1#/Transactions/updateTransactions
-func (s *Service) UpdateTransactions(budgetID string,
+// UpdateTransactions creates one or more new transactions for a plan
+// https://api.ynab.com/v1#/Transactions/updateTransactions
+func (s *Service) UpdateTransactions(planID string,
 	p []PayloadTransaction) (*OperationSummary, error) {
 
 	payload := struct {
@@ -181,7 +181,7 @@ func (s *Service) UpdateTransactions(budgetID string,
 		Data *OperationSummary `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/budgets/%s/transactions", budgetID)
+	url := fmt.Sprintf("/plans/%s/transactions", planID)
 	err = s.c.PATCH(url, &resModel, buf)
 	if err != nil {
 		return nil, err
@@ -189,16 +189,16 @@ func (s *Service) UpdateTransactions(budgetID string,
 	return resModel.Data, nil
 }
 
-// DeleteTransaction deletes a transaction from a budget
-// https://api.youneedabudget.com/v1#/Transactions/deleteTransaction
-func (s *Service) DeleteTransaction(budgetID, transactionID string) (*Transaction, error) {
+// DeleteTransaction deletes a transaction from a plan
+// https://api.ynab.com/v1#/Transactions/deleteTransaction
+func (s *Service) DeleteTransaction(planID, transactionID string) (*Transaction, error) {
 	resModel := struct {
 		Data struct {
 			Transaction *Transaction `json:"transaction"`
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/budgets/%s/transactions/%s", budgetID, transactionID)
+	url := fmt.Sprintf("/plans/%s/transactions/%s", planID, transactionID)
 	err := s.c.DELETE(url, &resModel)
 	if err != nil {
 		return nil, err
@@ -207,9 +207,9 @@ func (s *Service) DeleteTransaction(budgetID, transactionID string) (*Transactio
 }
 
 // GetTransactionsByAccount fetches the list of transactions of a specific account
-// from a budget with filtering capabilities
-// https://api.youneedabudget.com/v1#/Transactions/getTransactionsByAccount
-func (s *Service) GetTransactionsByAccount(budgetID, accountID string,
+// from a plan with filtering capabilities
+// https://api.ynab.com/v1#/Transactions/getTransactionsByAccount
+func (s *Service) GetTransactionsByAccount(planID, accountID string,
 	f *Filter) (*SearchResultSnapshot, error) {
 
 	resModel := struct {
@@ -219,7 +219,7 @@ func (s *Service) GetTransactionsByAccount(budgetID, accountID string,
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/budgets/%s/accounts/%s/transactions", budgetID, accountID)
+	url := fmt.Sprintf("/plans/%s/accounts/%s/transactions", planID, accountID)
 	if f != nil {
 		url = fmt.Sprintf("%s?%s", url, f.ToQuery())
 	}
@@ -234,9 +234,9 @@ func (s *Service) GetTransactionsByAccount(budgetID, accountID string,
 	}, nil
 }
 
-// GetTransactionsByMonth fetches the list of transactions for a specific month from a budget
-// https://api.youneedabudget.com/v1#/Transactions/getTransactionsByMonth
-func (s *Service) GetTransactionsByMonth(budgetID, month string, f *Filter) (*SearchResultSnapshot, error) {
+// GetTransactionsByMonth fetches the list of transactions for a specific month from a plan
+// https://api.ynab.com/v1#/Transactions/getTransactionsByMonth
+func (s *Service) GetTransactionsByMonth(planID, month string, f *Filter) (*SearchResultSnapshot, error) {
 	resModel := struct {
 		Data struct {
 			Transactions    []*Transaction `json:"transactions"`
@@ -244,7 +244,7 @@ func (s *Service) GetTransactionsByMonth(budgetID, month string, f *Filter) (*Se
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/budgets/%s/months/%s/transactions", budgetID, month)
+	url := fmt.Sprintf("/plans/%s/months/%s/transactions", planID, month)
 	if f != nil {
 		url = fmt.Sprintf("%s?%s", url, f.ToQuery())
 	}
@@ -260,9 +260,9 @@ func (s *Service) GetTransactionsByMonth(budgetID, month string, f *Filter) (*Se
 }
 
 // GetTransactionsByCategory fetches the list of transactions of a specific category
-// from a budget with filtering capabilities
-// https://api.youneedabudget.com/v1#/Transactions/getTransactionsByCategory
-func (s *Service) GetTransactionsByCategory(budgetID, categoryID string,
+// from a plan with filtering capabilities
+// https://api.ynab.com/v1#/Transactions/getTransactionsByCategory
+func (s *Service) GetTransactionsByCategory(planID, categoryID string,
 	f *Filter) ([]*Hybrid, error) {
 
 	resModel := struct {
@@ -271,7 +271,7 @@ func (s *Service) GetTransactionsByCategory(budgetID, categoryID string,
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/budgets/%s/categories/%s/transactions", budgetID, categoryID)
+	url := fmt.Sprintf("/plans/%s/categories/%s/transactions", planID, categoryID)
 	if f != nil {
 		url = fmt.Sprintf("%s?%s", url, f.ToQuery())
 	}
@@ -284,9 +284,9 @@ func (s *Service) GetTransactionsByCategory(budgetID, categoryID string,
 }
 
 // GetTransactionsByPayee fetches the list of transactions of a specific payee
-// from a budget with filtering capabilities
-// https://api.youneedabudget.com/v1#/Transactions/getTransactionsByPayee
-func (s *Service) GetTransactionsByPayee(budgetID, payeeID string,
+// from a plan with filtering capabilities
+// https://api.ynab.com/v1#/Transactions/getTransactionsByPayee
+func (s *Service) GetTransactionsByPayee(planID, payeeID string,
 	f *Filter) ([]*Hybrid, error) {
 
 	resModel := struct {
@@ -295,7 +295,7 @@ func (s *Service) GetTransactionsByPayee(budgetID, payeeID string,
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/budgets/%s/payees/%s/transactions", budgetID, payeeID)
+	url := fmt.Sprintf("/plans/%s/payees/%s/transactions", planID, payeeID)
 	if f != nil {
 		url = fmt.Sprintf("%s?%s", url, f.ToQuery())
 	}
@@ -315,8 +315,8 @@ type ScheduledSearchResultSnapshot struct {
 
 // GetScheduledTransactions fetches the list of scheduled transactions from
 // a budget with filtering capabilities
-// https://api.youneedabudget.com/v1#/Scheduled_Transactions/getScheduledTransactions
-func (s *Service) GetScheduledTransactions(budgetID string, f *api.Filter) (*ScheduledSearchResultSnapshot, error) {
+// https://api.ynab.com/v1#/Scheduled_Transactions/getScheduledTransactions
+func (s *Service) GetScheduledTransactions(planID string, f *api.Filter) (*ScheduledSearchResultSnapshot, error) {
 	resModel := struct {
 		Data struct {
 			ScheduledTransactions []*Scheduled `json:"scheduled_transactions"`
@@ -324,7 +324,7 @@ func (s *Service) GetScheduledTransactions(budgetID string, f *api.Filter) (*Sch
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/budgets/%s/scheduled_transactions", budgetID)
+	url := fmt.Sprintf("/plans/%s/scheduled_transactions", planID)
 	if f != nil {
 		url = fmt.Sprintf("%s?%s", url, f.ToQuery())
 	}
@@ -339,16 +339,16 @@ func (s *Service) GetScheduledTransactions(budgetID string, f *api.Filter) (*Sch
 	}, nil
 }
 
-// GetScheduledTransaction fetches a specific scheduled transaction from a budget
-// https://api.youneedabudget.com/v1#/Scheduled_Transactions/getScheduledTransactionById
-func (s *Service) GetScheduledTransaction(budgetID, scheduledTransactionID string) (*Scheduled, error) {
+// GetScheduledTransaction fetches a specific scheduled transaction from a plan
+// https://api.ynab.com/v1#/Scheduled_Transactions/getScheduledTransactionById
+func (s *Service) GetScheduledTransaction(planID, scheduledTransactionID string) (*Scheduled, error) {
 	resModel := struct {
 		Data struct {
 			ScheduledTransactions *Scheduled `json:"scheduled_transaction"`
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/budgets/%s/scheduled_transactions/%s", budgetID, scheduledTransactionID)
+	url := fmt.Sprintf("/plans/%s/scheduled_transactions/%s", planID, scheduledTransactionID)
 	if err := s.c.GET(url, &resModel); err != nil {
 		return nil, err
 	}
@@ -378,9 +378,9 @@ func (f *Filter) ToQuery() string {
 	return strings.Join(pairs, "&")
 }
 
-// CreateScheduledTransaction creates a new scheduled transaction for a budget
-// https://api.youneedabudget.com/v1#/Scheduled_Transactions/createScheduledTransaction
-func (s *Service) CreateScheduledTransaction(budgetID string, p PayloadScheduledTransaction) (*Scheduled, error) {
+// CreateScheduledTransaction creates a new scheduled transaction for a plan
+// https://api.ynab.com/v1#/Scheduled_Transactions/createScheduledTransaction
+func (s *Service) CreateScheduledTransaction(planID string, p PayloadScheduledTransaction) (*Scheduled, error) {
 	payload := struct {
 		ScheduledTransaction *PayloadScheduledTransaction `json:"scheduled_transaction"`
 	}{
@@ -398,16 +398,16 @@ func (s *Service) CreateScheduledTransaction(budgetID string, p PayloadScheduled
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/budgets/%s/scheduled_transactions", budgetID)
+	url := fmt.Sprintf("/plans/%s/scheduled_transactions", planID)
 	if err := s.c.POST(url, &resModel, buf); err != nil {
 		return nil, err
 	}
 	return resModel.Data.ScheduledTransaction, nil
 }
 
-// UpdateScheduledTransaction updates a scheduled transaction for a budget
-// https://api.youneedabudget.com/v1#/Scheduled_Transactions/updateScheduledTransaction
-func (s *Service) UpdateScheduledTransaction(budgetID, scheduledTransactionID string, p PayloadScheduledTransaction) (*Scheduled, error) {
+// UpdateScheduledTransaction updates a scheduled transaction for a plan
+// https://api.ynab.com/v1#/Scheduled_Transactions/updateScheduledTransaction
+func (s *Service) UpdateScheduledTransaction(planID, scheduledTransactionID string, p PayloadScheduledTransaction) (*Scheduled, error) {
 	payload := struct {
 		ScheduledTransaction *PayloadScheduledTransaction `json:"scheduled_transaction"`
 	}{
@@ -425,23 +425,23 @@ func (s *Service) UpdateScheduledTransaction(budgetID, scheduledTransactionID st
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/budgets/%s/scheduled_transactions/%s", budgetID, scheduledTransactionID)
+	url := fmt.Sprintf("/plans/%s/scheduled_transactions/%s", planID, scheduledTransactionID)
 	if err := s.c.PUT(url, &resModel, buf); err != nil {
 		return nil, err
 	}
 	return resModel.Data.ScheduledTransaction, nil
 }
 
-// DeleteScheduledTransaction deletes a scheduled transaction from a budget
-// https://api.youneedabudget.com/v1#/Scheduled_Transactions/deleteScheduledTransaction
-func (s *Service) DeleteScheduledTransaction(budgetID, scheduledTransactionID string) (*Scheduled, error) {
+// DeleteScheduledTransaction deletes a scheduled transaction from a plan
+// https://api.ynab.com/v1#/Scheduled_Transactions/deleteScheduledTransaction
+func (s *Service) DeleteScheduledTransaction(planID, scheduledTransactionID string) (*Scheduled, error) {
 	resModel := struct {
 		Data struct {
 			ScheduledTransaction *Scheduled `json:"scheduled_transaction"`
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/budgets/%s/scheduled_transactions/%s", budgetID, scheduledTransactionID)
+	url := fmt.Sprintf("/plans/%s/scheduled_transactions/%s", planID, scheduledTransactionID)
 	err := s.c.DELETE(url, &resModel)
 	if err != nil {
 		return nil, err
@@ -449,14 +449,14 @@ func (s *Service) DeleteScheduledTransaction(budgetID, scheduledTransactionID st
 	return resModel.Data.ScheduledTransaction, nil
 }
 
-// ImportTransactions imports available transactions from all linked accounts for a budget
-// https://api.youneedabudget.com/v1#/Transactions/importTransactions
-func (s *Service) ImportTransactions(budgetID string) (*ImportResult, error) {
+// ImportTransactions imports available transactions from all linked accounts for a plan
+// https://api.ynab.com/v1#/Transactions/importTransactions
+func (s *Service) ImportTransactions(planID string) (*ImportResult, error) {
 	resModel := struct {
 		Data *ImportResult `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/budgets/%s/transactions/import", budgetID)
+	url := fmt.Sprintf("/plans/%s/transactions/import", planID)
 	if err := s.c.POST(url, &resModel, nil); err != nil {
 		return nil, err
 	}

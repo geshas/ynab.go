@@ -7,15 +7,15 @@ import (
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/jarcoal/httpmock.v1"
 
-	"github.com/coltoneshaw/ynab.go"
-	"github.com/coltoneshaw/ynab.go/api/user"
+	"github.com/geshas/ynab.go"
+	"github.com/geshas/ynab.go/api/user"
 )
 
 func TestService_GetUser(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	httpmock.RegisterResponder(http.MethodGet, "https://api.youneedabudget.com/v1/user",
+	httpmock.RegisterResponder(http.MethodGet, "https://api.ynab.com/v1/user",
 		func(req *http.Request) (*http.Response, error) {
 			res := httpmock.NewStringResponse(200, `{
   "data": {

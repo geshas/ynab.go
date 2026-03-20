@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/coltoneshaw/ynab.go/oauth"
+	"github.com/geshas/ynab.go/oauth"
 )
 
 func TestNewOAuthClient(t *testing.T) {
@@ -74,7 +74,7 @@ func TestOAuthClient_ServiceGetters(t *testing.T) {
 
 	// Test all service getters
 	assert.NotNil(t, client.User())
-	assert.NotNil(t, client.Budget())
+	assert.NotNil(t, client.Plan())
 	assert.NotNil(t, client.Account())
 	assert.NotNil(t, client.Category())
 	assert.NotNil(t, client.Month())

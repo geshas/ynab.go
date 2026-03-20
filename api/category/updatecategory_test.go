@@ -8,9 +8,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/jarcoal/httpmock.v1"
 
-	"github.com/coltoneshaw/ynab.go"
-	"github.com/coltoneshaw/ynab.go/api"
-	"github.com/coltoneshaw/ynab.go/api/category"
+	"github.com/geshas/ynab.go"
+	"github.com/geshas/ynab.go/api"
+	"github.com/geshas/ynab.go/api/category"
 )
 
 func TestService_UpdateCategory(t *testing.T) {
@@ -24,7 +24,7 @@ func TestService_UpdateCategory(t *testing.T) {
 		GoalTarget: &newGoalTarget,
 	}
 
-	url := "https://api.youneedabudget.com/v1/budgets/aa248caa-eed7-4575-a990-717386438d2c/categories/13419c12-78d3-4a26-82ca-1cde7aa1d6f8"
+	url := "https://api.ynab.com/v1/plans/aa248caa-eed7-4575-a990-717386438d2c/categories/13419c12-78d3-4a26-82ca-1cde7aa1d6f8"
 	httpmock.RegisterResponder(http.MethodPatch, url,
 		func(req *http.Request) (*http.Response, error) {
 			resModel := struct {
