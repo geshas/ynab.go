@@ -26,7 +26,7 @@ type Plan struct {
 	Transactions             []*transaction.Summary                 `json:"transactions"`
 	SubTransactions          []*transaction.SubTransaction          `json:"subtransactions"`
 	ScheduledTransactions    []*transaction.ScheduledSummary        `json:"scheduled_transactions"`
-	ScheduledSubTransactions []*transaction.ScheduledSubTransaction `json:"scheduled_sub_transactions"`
+	ScheduledSubTransactions []*transaction.ScheduledSubTransaction `json:"scheduled_subtransactions"`
 
 	DateFormat     *DateFormat     `json:"date_format"`
 	CurrencyFormat *CurrencyFormat `json:"currency_format"`
