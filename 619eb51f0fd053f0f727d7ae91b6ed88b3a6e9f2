@@ -1,0 +1,29 @@
+oauth/token.go
+  b3e1b9f0187e95bf 12,15-16,36,67-68,70-71,74,82,87-88,92,96-97,102-107
+oauth/storage_test.go
+  b3e1b9f0187e95bf 134,136-137,145,248,310-316,319-321,327-328,336-337,341-344,351-353
+api/http.go
+  b3e1b9f0187e95bf 11,16-18,24,27-29
+oauth/storage.go
+  b3e1b9f0187e95bf 4-6,9,12,32,43-44,51-52,61-62,69-70,182-187,191,206-210,240-243,254-259,262-264,267-269,271-273,276-297,299,400
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.17",
+  "base_commit_sha": "619eb51f0fd053f0f727d7ae91b6ed88b3a6e9f2",
+  "prompts": {
+    "b3e1b9f0187e95bf": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_2ed95fceaffeRWTdOw6x3Y9NFh",
+        "model": "github-copilot/claude-sonnet-4.6"
+      },
+      "human_author": "Evgeny <evgeny@example.com>",
+      "messages": [],
+      "total_additions": 262,
+      "total_deletions": 188,
+      "accepted_lines": 260,
+      "overriden_lines": 0
+    }
+  }
+}
