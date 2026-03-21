@@ -17,7 +17,7 @@ func TestClient_GET(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		httpmock.RegisterResponder(http.MethodGet, fmt.Sprintf("%s%s", apiEndpoint, "/foo"),
+		httpmock.RegisterResponder(http.MethodGet, fmt.Sprintf("%s%s", api.APIEndpoint, "/foo"),
 			func(req *http.Request) (*http.Response, error) {
 				assert.Equal(t, "application/json", req.Header.Get("Accept"))
 				assert.Equal(t, "Bearer 6zL9vh8]B9H3BEecwL%Vzh^VwKR3C2CNZ3Bv%=fFxm$z)duY[U+2=3CydZrkQFnA", req.Header.Get("Authorization"))
@@ -41,7 +41,7 @@ func TestClient_GET(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		httpmock.RegisterResponder(http.MethodGet, fmt.Sprintf("%s%s", apiEndpoint, "/foo"),
+		httpmock.RegisterResponder(http.MethodGet, fmt.Sprintf("%s%s", api.APIEndpoint, "/foo"),
 			func(req *http.Request) (*http.Response, error) {
 				res := httpmock.NewStringResponse(http.StatusBadRequest, `{
   "error": {
@@ -68,7 +68,7 @@ func TestClient_GET(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		httpmock.RegisterResponder(http.MethodGet, fmt.Sprintf("%s%s", apiEndpoint, "/foo"),
+		httpmock.RegisterResponder(http.MethodGet, fmt.Sprintf("%s%s", api.APIEndpoint, "/foo"),
 			func(req *http.Request) (*http.Response, error) {
 				res := httpmock.NewStringResponse(http.StatusTooManyRequests, `{
   "error": {
@@ -104,7 +104,7 @@ func TestClient_GET(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		httpmock.RegisterResponder(http.MethodGet, fmt.Sprintf("%s%s", apiEndpoint, "/foo"),
+		httpmock.RegisterResponder(http.MethodGet, fmt.Sprintf("%s%s", api.APIEndpoint, "/foo"),
 			func(req *http.Request) (*http.Response, error) {
 				return httpmock.NewStringResponse(http.StatusInternalServerError, "Internal Server Error"), nil
 			},
@@ -116,7 +116,7 @@ func TestClient_GET(t *testing.T) {
 
 		c := NewClient("")
 		err := c.(*client).GET("/foo", &response)
-		expectedErrStr := "api: error id=500 name=unknown_api_error detail=Unknown API error"
+		expectedErrStr := "api: error id=500 name=unknown_api_error detail=unexpected API error (HTTP 500)"
 		assert.EqualError(t, err, expectedErrStr)
 	})
 
@@ -124,7 +124,7 @@ func TestClient_GET(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		httpmock.RegisterResponder(http.MethodGet, fmt.Sprintf("%s%s", apiEndpoint, "/foo"),
+		httpmock.RegisterResponder(http.MethodGet, fmt.Sprintf("%s%s", api.APIEndpoint, "/foo"),
 			func(req *http.Request) (*http.Response, error) {
 				res := httpmock.NewStringResponse(http.StatusOK, `{"bar":"foo"}`)
 				return res, nil
@@ -149,7 +149,7 @@ func TestClient_POST(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		httpmock.RegisterResponder(http.MethodPost, fmt.Sprintf("%s%s", apiEndpoint, "/foo"),
+		httpmock.RegisterResponder(http.MethodPost, fmt.Sprintf("%s%s", api.APIEndpoint, "/foo"),
 			func(req *http.Request) (*http.Response, error) {
 				buf, err := io.ReadAll(req.Body)
 				assert.NoError(t, err)
@@ -176,7 +176,7 @@ func TestClient_POST(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		httpmock.RegisterResponder(http.MethodPost, fmt.Sprintf("%s%s", apiEndpoint, "/foo"),
+		httpmock.RegisterResponder(http.MethodPost, fmt.Sprintf("%s%s", api.APIEndpoint, "/foo"),
 			func(req *http.Request) (*http.Response, error) {
 				res := httpmock.NewStringResponse(http.StatusBadRequest, `{
   "error": {
@@ -203,7 +203,7 @@ func TestClient_POST(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		httpmock.RegisterResponder(http.MethodPost, fmt.Sprintf("%s%s", apiEndpoint, "/foo"),
+		httpmock.RegisterResponder(http.MethodPost, fmt.Sprintf("%s%s", api.APIEndpoint, "/foo"),
 			func(req *http.Request) (*http.Response, error) {
 				return httpmock.NewStringResponse(http.StatusInternalServerError, "Internal Server Error"), nil
 			},
@@ -215,7 +215,7 @@ func TestClient_POST(t *testing.T) {
 
 		c := NewClient("")
 		err := c.(*client).POST("/foo", &response, []byte(`{"bar":"foo"}`))
-		expectedErrStr := "api: error id=500 name=unknown_api_error detail=Unknown API error"
+		expectedErrStr := "api: error id=500 name=unknown_api_error detail=unexpected API error (HTTP 500)"
 		assert.EqualError(t, err, expectedErrStr)
 	})
 
@@ -223,7 +223,7 @@ func TestClient_POST(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		httpmock.RegisterResponder(http.MethodPost, fmt.Sprintf("%s%s", apiEndpoint, "/foo"),
+		httpmock.RegisterResponder(http.MethodPost, fmt.Sprintf("%s%s", api.APIEndpoint, "/foo"),
 			func(req *http.Request) (*http.Response, error) {
 				res := httpmock.NewStringResponse(http.StatusOK, `{"bar":"foo"}`)
 				return res, nil
@@ -246,7 +246,7 @@ func TestClient_POST(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		httpmock.RegisterResponder(http.MethodPost, fmt.Sprintf("%s%s", apiEndpoint, "/foo"),
+		httpmock.RegisterResponder(http.MethodPost, fmt.Sprintf("%s%s", api.APIEndpoint, "/foo"),
 			func(req *http.Request) (*http.Response, error) {
 				assert.Equal(t, req.Header.Get("Content-Type"), "application/json")
 				res := httpmock.NewStringResponse(http.StatusOK, `{"bar":"foo"}`)
@@ -272,7 +272,7 @@ func TestClient_PUT(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		httpmock.RegisterResponder(http.MethodPut, fmt.Sprintf("%s%s", apiEndpoint, "/foo"),
+		httpmock.RegisterResponder(http.MethodPut, fmt.Sprintf("%s%s", api.APIEndpoint, "/foo"),
 			func(req *http.Request) (*http.Response, error) {
 				buf, err := io.ReadAll(req.Body)
 				assert.NoError(t, err)
@@ -299,7 +299,7 @@ func TestClient_PUT(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		httpmock.RegisterResponder(http.MethodPut, fmt.Sprintf("%s%s", apiEndpoint, "/foo"),
+		httpmock.RegisterResponder(http.MethodPut, fmt.Sprintf("%s%s", api.APIEndpoint, "/foo"),
 			func(req *http.Request) (*http.Response, error) {
 				res := httpmock.NewStringResponse(http.StatusBadRequest, `{
   "error": {
@@ -326,7 +326,7 @@ func TestClient_PUT(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		httpmock.RegisterResponder(http.MethodPut, fmt.Sprintf("%s%s", apiEndpoint, "/foo"),
+		httpmock.RegisterResponder(http.MethodPut, fmt.Sprintf("%s%s", api.APIEndpoint, "/foo"),
 			func(req *http.Request) (*http.Response, error) {
 				return httpmock.NewStringResponse(http.StatusInternalServerError, "Internal Server Error"), nil
 			},
@@ -338,7 +338,7 @@ func TestClient_PUT(t *testing.T) {
 
 		c := NewClient("")
 		err := c.(*client).PUT("/foo", &response, []byte(`{"bar":"foo"}`))
-		expectedErrStr := "api: error id=500 name=unknown_api_error detail=Unknown API error"
+		expectedErrStr := "api: error id=500 name=unknown_api_error detail=unexpected API error (HTTP 500)"
 		assert.EqualError(t, err, expectedErrStr)
 	})
 
@@ -346,7 +346,7 @@ func TestClient_PUT(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		httpmock.RegisterResponder(http.MethodPut, fmt.Sprintf("%s%s", apiEndpoint, "/foo"),
+		httpmock.RegisterResponder(http.MethodPut, fmt.Sprintf("%s%s", api.APIEndpoint, "/foo"),
 			func(req *http.Request) (*http.Response, error) {
 				res := httpmock.NewStringResponse(http.StatusOK, `{"bar":"foo"}`)
 				return res, nil
@@ -369,7 +369,7 @@ func TestClient_PUT(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		httpmock.RegisterResponder(http.MethodPut, fmt.Sprintf("%s%s", apiEndpoint, "/foo"),
+		httpmock.RegisterResponder(http.MethodPut, fmt.Sprintf("%s%s", api.APIEndpoint, "/foo"),
 			func(req *http.Request) (*http.Response, error) {
 				assert.Equal(t, req.Header.Get("Content-Type"), "application/json")
 				res := httpmock.NewStringResponse(http.StatusOK, `{"bar":"foo"}`)
@@ -395,7 +395,7 @@ func TestClient_PATCH(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		httpmock.RegisterResponder(http.MethodPatch, fmt.Sprintf("%s%s", apiEndpoint, "/foo"),
+		httpmock.RegisterResponder(http.MethodPatch, fmt.Sprintf("%s%s", api.APIEndpoint, "/foo"),
 			func(req *http.Request) (*http.Response, error) {
 				buf, err := io.ReadAll(req.Body)
 				assert.NoError(t, err)
@@ -422,7 +422,7 @@ func TestClient_PATCH(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		httpmock.RegisterResponder(http.MethodPatch, fmt.Sprintf("%s%s", apiEndpoint, "/foo"),
+		httpmock.RegisterResponder(http.MethodPatch, fmt.Sprintf("%s%s", api.APIEndpoint, "/foo"),
 			func(req *http.Request) (*http.Response, error) {
 				res := httpmock.NewStringResponse(http.StatusBadRequest, `{
   "error": {
@@ -449,7 +449,7 @@ func TestClient_PATCH(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		httpmock.RegisterResponder(http.MethodPatch, fmt.Sprintf("%s%s", apiEndpoint, "/foo"),
+		httpmock.RegisterResponder(http.MethodPatch, fmt.Sprintf("%s%s", api.APIEndpoint, "/foo"),
 			func(req *http.Request) (*http.Response, error) {
 				return httpmock.NewStringResponse(http.StatusInternalServerError, "Internal Server Error"), nil
 			},
@@ -461,7 +461,7 @@ func TestClient_PATCH(t *testing.T) {
 
 		c := NewClient("")
 		err := c.(*client).PATCH("/foo", &response, []byte(`{"bar":"foo"}`))
-		expectedErrStr := "api: error id=500 name=unknown_api_error detail=Unknown API error"
+		expectedErrStr := "api: error id=500 name=unknown_api_error detail=unexpected API error (HTTP 500)"
 		assert.EqualError(t, err, expectedErrStr)
 	})
 
@@ -469,7 +469,7 @@ func TestClient_PATCH(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		httpmock.RegisterResponder(http.MethodPatch, fmt.Sprintf("%s%s", apiEndpoint, "/foo"),
+		httpmock.RegisterResponder(http.MethodPatch, fmt.Sprintf("%s%s", api.APIEndpoint, "/foo"),
 			func(req *http.Request) (*http.Response, error) {
 				res := httpmock.NewStringResponse(http.StatusOK, `{"bar":"foo"}`)
 				return res, nil
@@ -492,7 +492,7 @@ func TestClient_PATCH(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		httpmock.RegisterResponder(http.MethodPatch, fmt.Sprintf("%s%s", apiEndpoint, "/foo"),
+		httpmock.RegisterResponder(http.MethodPatch, fmt.Sprintf("%s%s", api.APIEndpoint, "/foo"),
 			func(req *http.Request) (*http.Response, error) {
 				assert.Equal(t, "application/json", req.Header.Get("Content-Type"))
 				res := httpmock.NewStringResponse(http.StatusOK, `{"bar":"foo"}`)
@@ -518,7 +518,7 @@ func TestClient_DELETE(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		httpmock.RegisterResponder(http.MethodDelete, fmt.Sprintf("%s%s", apiEndpoint, "/foo"),
+		httpmock.RegisterResponder(http.MethodDelete, fmt.Sprintf("%s%s", api.APIEndpoint, "/foo"),
 			func(req *http.Request) (*http.Response, error) {
 				assert.Equal(t, "application/json", req.Header.Get("Accept"))
 				assert.Equal(t, "Bearer 6zL9vh8]B9H3BEecwL%Vzh^VwKR3C2CNZ3Bv%=fFxm$z)duY[U+2=3CydZrkQFnA", req.Header.Get("Authorization"))
@@ -553,7 +553,7 @@ func TestClient_DELETE(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		httpmock.RegisterResponder(http.MethodDelete, fmt.Sprintf("%s%s", apiEndpoint, "/foo"),
+		httpmock.RegisterResponder(http.MethodDelete, fmt.Sprintf("%s%s", api.APIEndpoint, "/foo"),
 			func(req *http.Request) (*http.Response, error) {
 				res := httpmock.NewStringResponse(http.StatusBadRequest, `{
 	  "error": {
@@ -581,7 +581,7 @@ func TestClient_DELETE(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		httpmock.RegisterResponder(http.MethodDelete, fmt.Sprintf("%s%s", apiEndpoint, "/foo"),
+		httpmock.RegisterResponder(http.MethodDelete, fmt.Sprintf("%s%s", api.APIEndpoint, "/foo"),
 			func(req *http.Request) (*http.Response, error) {
 				return httpmock.NewStringResponse(http.StatusInternalServerError, "Internal Server Error"), nil
 			},
@@ -593,7 +593,7 @@ func TestClient_DELETE(t *testing.T) {
 
 		c := NewClient("")
 		err := c.(*client).DELETE("/foo", &response)
-		expectedErrStr := "api: error id=500 name=unknown_api_error detail=Unknown API error"
+		expectedErrStr := "api: error id=500 name=unknown_api_error detail=unexpected API error (HTTP 500)"
 		assert.EqualError(t, err, expectedErrStr)
 	})
 
@@ -601,7 +601,7 @@ func TestClient_DELETE(t *testing.T) {
 		httpmock.Activate()
 		defer httpmock.DeactivateAndReset()
 
-		httpmock.RegisterResponder(http.MethodDelete, fmt.Sprintf("%s%s", apiEndpoint, "/foo"),
+		httpmock.RegisterResponder(http.MethodDelete, fmt.Sprintf("%s%s", api.APIEndpoint, "/foo"),
 			func(req *http.Request) (*http.Response, error) {
 				res := httpmock.NewStringResponse(http.StatusOK, `{"bar":"foo"}`)
 				res.Header.Add("X-Rate-Limit", "36/200")
@@ -636,7 +636,7 @@ func TestClient_AutomaticRateTracking(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	httpmock.RegisterResponder(http.MethodGet, fmt.Sprintf("%s%s", apiEndpoint, "/test"),
+	httpmock.RegisterResponder(http.MethodGet, fmt.Sprintf("%s%s", api.APIEndpoint, "/test"),
 		func(req *http.Request) (*http.Response, error) {
 			res := httpmock.NewStringResponse(http.StatusOK, `{"success": true}`)
 			return res, nil
@@ -670,11 +670,11 @@ func TestClient_AutomaticRateTracking(t *testing.T) {
 	assert.Equal(t, 2, c.RequestsInWindow())
 }
 
-func TestClient_RateLimitingNotTrackedOnError(t *testing.T) {
+func TestClient_RateLimitingTrackedOnAllRequests(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	httpmock.RegisterResponder(http.MethodGet, fmt.Sprintf("%s%s", apiEndpoint, "/test"),
+	httpmock.RegisterResponder(http.MethodGet, fmt.Sprintf("%s%s", api.APIEndpoint, "/test"),
 		func(req *http.Request) (*http.Response, error) {
 			res := httpmock.NewStringResponse(http.StatusBadRequest, `{
 				"error": {
@@ -693,14 +693,15 @@ func TestClient_RateLimitingNotTrackedOnError(t *testing.T) {
 	assert.Equal(t, 200, c.RequestsRemaining())
 	assert.Equal(t, 0, c.RequestsInWindow())
 
-	// Make a failing request
+	// Make a failing request — it must still be counted so the rate limiter
+	// accurately reflects the number of requests sent to the server.
 	response := struct {
 		Success bool `json:"success"`
 	}{}
 	err := c.(*client).GET("/test", &response)
 	assert.Error(t, err)
 
-	// Verify rate limiting was NOT tracked for failed request
-	assert.Equal(t, 200, c.RequestsRemaining()) // Should remain unchanged
-	assert.Equal(t, 0, c.RequestsInWindow())    // Should remain unchanged
+	// Verify rate limiting WAS tracked even though the request failed
+	assert.Equal(t, 199, c.RequestsRemaining())
+	assert.Equal(t, 1, c.RequestsInWindow())
 }

@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"net/url"
+	"strconv"
 )
 
 // Config holds OAuth 2.0 configuration for YNAB
@@ -239,16 +240,14 @@ func (cr *CallbackResult) ToToken() *Token {
 	return token
 }
 
-// parseExpiresIn converts expires_in string to int64
+// parseExpiresIn converts an expires_in string to int64 seconds.
 func parseExpiresIn(expiresIn string) (int64, error) {
-	// This would typically use strconv.ParseInt but keeping it simple
-	switch expiresIn {
-	case "7200": // 2 hours (YNAB default)
-		return 7200, nil
-	case "3600": // 1 hour
-		return 3600, nil
-	default:
-		// For now, default to 2 hours if we can't parse
-		return 7200, nil
+	seconds, err := strconv.ParseInt(expiresIn, 10, 64)
+	if err != nil {
+		return 0, fmt.Errorf("invalid expires_in value %q: %w", expiresIn, err)
 	}
+	if seconds <= 0 {
+		return 0, fmt.Errorf("expires_in must be positive, got %d", seconds)
+	}
+	return seconds, nil
 }

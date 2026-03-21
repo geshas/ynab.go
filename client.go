@@ -4,7 +4,6 @@ package ynab // import "github.com/geshas/ynab.go"
 import (
 	"context"
 	"net/http"
-	"sync"
 	"time"
 
 	"github.com/geshas/ynab.go/api"
@@ -18,8 +17,6 @@ import (
 	"github.com/geshas/ynab.go/api/user"
 	"github.com/geshas/ynab.go/oauth"
 )
-
-const apiEndpoint = "https://api.ynab.com/v1"
 
 // ClientServicer contract for a client service API
 type ClientServicer interface {
@@ -69,8 +66,6 @@ func NewClientWithTokenProvider(tokenProvider api.TokenProvider) ClientServicer 
 
 // client API
 type client struct {
-	sync.Mutex
-
 	tokenProvider api.TokenProvider
 
 	httpClient *api.HTTPClient
@@ -179,45 +174,47 @@ func (c *client) IsAuthenticated() bool {
 
 // GET sends a GET request to the YNAB API
 func (c *client) GET(url string, responseModel any) error {
-	return c.do(http.MethodGet, url, responseModel, nil)
+	return c.doWithContext(context.Background(), http.MethodGet, url, responseModel, nil)
 }
 
 // POST sends a POST request to the YNAB API
 func (c *client) POST(url string, responseModel any, requestBody []byte) error {
-	return c.do(http.MethodPost, url, responseModel, requestBody)
+	return c.doWithContext(context.Background(), http.MethodPost, url, responseModel, requestBody)
 }
 
 // PUT sends a PUT request to the YNAB API
 func (c *client) PUT(url string, responseModel any, requestBody []byte) error {
-	return c.do(http.MethodPut, url, responseModel, requestBody)
+	return c.doWithContext(context.Background(), http.MethodPut, url, responseModel, requestBody)
 }
 
 // PATCH sends a PATCH request to the YNAB API
 func (c *client) PATCH(url string, responseModel any, requestBody []byte) error {
-	return c.do(http.MethodPatch, url, responseModel, requestBody)
+	return c.doWithContext(context.Background(), http.MethodPatch, url, responseModel, requestBody)
 }
 
 // DELETE sends a DELETE request to the YNAB API
 func (c *client) DELETE(url string, responseModel any) error {
-	return c.do(http.MethodDelete, url, responseModel, nil)
+	return c.doWithContext(context.Background(), http.MethodDelete, url, responseModel, nil)
 }
 
-// do sends a request to the YNAB API
+// do sends a request to the YNAB API using a background context.
+// Deprecated: prefer doWithContext.
 func (c *client) do(method, url string, responseModel any, requestBody []byte) error {
-	token, err := c.tokenProvider.GetAccessToken(context.Background())
+	return c.doWithContext(context.Background(), method, url, responseModel, requestBody)
+}
+
+// doWithContext sends a request to the YNAB API, honouring the provided context
+// for cancellation, deadlines, and tracing.
+func (c *client) doWithContext(ctx context.Context, method, url string, responseModel any, requestBody []byte) error {
+	token, err := c.tokenProvider.GetAccessToken(ctx)
 	if err != nil {
 		return err
 	}
 
-	err = c.httpClient.DoRequest(context.Background(), method, url, responseModel, requestBody, token)
-	if err != nil {
-		return err
-	}
-
-	// Record successful request for rate limiting
+	// Record the attempt before sending so that failed/retried requests are counted.
 	c.rateLimiter.RecordRequest()
 
-	return nil
+	return c.httpClient.DoRequest(ctx, method, url, responseModel, requestBody, token)
 }
 
 // OAuth convenience functions

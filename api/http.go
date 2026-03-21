@@ -94,17 +94,17 @@ func (h *HTTPClient) HandleResponse(resp *http.Response, responseModel any) erro
 			Error *Error `json:"error"`
 		}{}
 
-		if err := json.Unmarshal(body, &response); err != nil {
-			// Return a forged *Error for ease of use
-			apiError := &Error{
-				ID:     strconv.Itoa(resp.StatusCode),
-				Name:   "unknown_api_error",
-				Detail: "Unknown API error",
-			}
-			return apiError
+		if jsonErr := json.Unmarshal(body, &response); jsonErr == nil && response.Error != nil {
+			return response.Error
 		}
 
-		return response.Error
+		// Body was not a YNAB JSON error (plain-text gateway error, empty body, etc.)
+		// Return a synthetic error so callers always receive a non-nil error on 4xx/5xx.
+		return &Error{
+			ID:     strconv.Itoa(resp.StatusCode),
+			Name:   "unknown_api_error",
+			Detail: fmt.Sprintf("unexpected API error (HTTP %d)", resp.StatusCode),
+		}
 	}
 
 	// Parse successful response

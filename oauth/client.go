@@ -252,6 +252,9 @@ func (c *OAuthClient) do(ctx context.Context, method, url string, responseModel 
 		return fmt.Errorf("failed to get access token: %w", err)
 	}
 
+	// Record the attempt before sending so that failed/retried requests are counted.
+	c.rateLimiter.RecordRequest()
+
 	// Try the request with current token
 	err = c.httpClient.DoRequestWithContext(ctx, method, url, responseModel, requestBody, accessToken)
 
@@ -260,22 +263,16 @@ func (c *OAuthClient) do(ctx context.Context, method, url string, responseModel 
 		if apiErr, ok := err.(*api.Error); ok && apiErr.ID == "401" {
 			// Try to refresh token
 			if _, refreshErr := c.tokenManager.RefreshToken(ctx); refreshErr == nil {
-				// Get new access token and retry
+				// Get new access token and retry (count the retry too)
 				if newAccessToken, tokenErr := c.tokenManager.GetAccessToken(ctx); tokenErr == nil {
+					c.rateLimiter.RecordRequest()
 					err = c.httpClient.DoRequestWithContext(ctx, method, url, responseModel, requestBody, newAccessToken)
 				}
 			}
 		}
 	}
 
-	if err != nil {
-		return err
-	}
-
-	// Record successful request for rate limiting
-	c.rateLimiter.RecordRequest()
-
-	return nil
+	return err
 }
 
 // ClientBuilder helps build OAuth clients with fluent interface
