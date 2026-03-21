@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/url"
 	"strconv"
+	"strings"
 )
 
 // Config holds OAuth 2.0 configuration for YNAB
@@ -130,8 +131,9 @@ func (c *Config) Validate() error {
 		return fmt.Errorf("redirect URI is required")
 	}
 
-	// Validate redirect URI format
-	if _, err := url.Parse(c.RedirectURI); err != nil {
+	// Validate redirect URI format — must be an absolute https:// or http://localhost URI
+	// (YNAB requires a registered redirect URI; relative URIs and unsafe schemes are rejected).
+	if err := validateRedirectURI(c.RedirectURI); err != nil {
 		return fmt.Errorf("invalid redirect URI: %w", err)
 	}
 
@@ -238,6 +240,34 @@ func (cr *CallbackResult) ToToken() *Token {
 	}
 
 	return token
+}
+
+// validateRedirectURI ensures the redirect URI is an absolute URI with an
+// allowed scheme (https, or http for localhost development) and has no fragment.
+func validateRedirectURI(raw string) error {
+	u, err := url.Parse(raw)
+	if err != nil {
+		return err
+	}
+	if !u.IsAbs() {
+		return fmt.Errorf("redirect URI must be absolute")
+	}
+	scheme := strings.ToLower(u.Scheme)
+	switch scheme {
+	case "https":
+		// always allowed
+	case "http":
+		host := strings.ToLower(u.Hostname())
+		if host != "localhost" && host != "127.0.0.1" && host != "::1" {
+			return fmt.Errorf("http scheme is only allowed for localhost redirect URIs")
+		}
+	default:
+		return fmt.Errorf("redirect URI scheme %q is not allowed; use https", u.Scheme)
+	}
+	if u.Fragment != "" {
+		return fmt.Errorf("redirect URI must not contain a fragment")
+	}
+	return nil
 }
 
 // parseExpiresIn converts an expires_in string to int64 seconds.

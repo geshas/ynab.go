@@ -3,6 +3,7 @@ package payee
 import (
 	"encoding/json"
 	"fmt"
+	"net/url"
 
 	"github.com/geshas/ynab.go/api"
 )
@@ -27,12 +28,12 @@ func (s *Service) GetPayees(planID string, f *api.Filter) (*SearchResultSnapshot
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/payees", planID)
+	reqURL := fmt.Sprintf("/plans/%s/payees", url.PathEscape(planID))
 	if f != nil {
-		url = fmt.Sprintf("%s?%s", url, f.ToQuery())
+		reqURL = fmt.Sprintf("%s?%s", reqURL, f.ToQuery())
 	}
 
-	if err := s.c.GET(url, &resModel); err != nil {
+	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}
 	return &SearchResultSnapshot{
@@ -50,8 +51,8 @@ func (s *Service) GetPayee(planID, payeeID string) (*Payee, error) {
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/payees/%s", planID, payeeID)
-	if err := s.c.GET(url, &resModel); err != nil {
+	reqURL := fmt.Sprintf("/plans/%s/payees/%s", url.PathEscape(planID), url.PathEscape(payeeID))
+	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}
 	return resModel.Data.Payee, nil
@@ -66,8 +67,8 @@ func (s *Service) GetPayeeLocations(planID string) ([]*Location, error) {
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/payee_locations", planID)
-	if err := s.c.GET(url, &resModel); err != nil {
+	reqURL := fmt.Sprintf("/plans/%s/payee_locations", url.PathEscape(planID))
+	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}
 	return resModel.Data.PayeeLocations, nil
@@ -82,8 +83,8 @@ func (s *Service) GetPayeeLocation(planID, payeeLocationID string) (*Location, e
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/payee_locations/%s", planID, payeeLocationID)
-	if err := s.c.GET(url, &resModel); err != nil {
+	reqURL := fmt.Sprintf("/plans/%s/payee_locations/%s", url.PathEscape(planID), url.PathEscape(payeeLocationID))
+	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}
 	return resModel.Data.PayeeLocation, nil
@@ -98,8 +99,8 @@ func (s *Service) GetPayeeLocationsByPayee(planID, payeeID string) ([]*Location,
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/payees/%s/payee_locations", planID, payeeID)
-	if err := s.c.GET(url, &resModel); err != nil {
+	reqURL := fmt.Sprintf("/plans/%s/payees/%s/payee_locations", url.PathEscape(planID), url.PathEscape(payeeID))
+	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}
 	return resModel.Data.PayeeLocations, nil
@@ -126,8 +127,8 @@ func (s *Service) UpdatePayee(planID, payeeID string, p PayloadPayee) (*Payee, e
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/payees/%s", planID, payeeID)
-	if err := s.c.PATCH(url, &resModel, buf); err != nil {
+	reqURL := fmt.Sprintf("/plans/%s/payees/%s", url.PathEscape(planID), url.PathEscape(payeeID))
+	if err := s.c.PATCH(reqURL, &resModel, buf); err != nil {
 		return nil, err
 	}
 	return resModel.Data.Payee, nil

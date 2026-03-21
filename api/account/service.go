@@ -3,6 +3,7 @@ package account
 import (
 	"encoding/json"
 	"fmt"
+	"net/url"
 
 	"github.com/geshas/ynab.go/api"
 )
@@ -27,11 +28,11 @@ func (s *Service) GetAccounts(planID string, f *api.Filter) (*SearchResultSnapsh
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/accounts", planID)
+	reqURL := fmt.Sprintf("/plans/%s/accounts", url.PathEscape(planID))
 	if f != nil {
-		url = fmt.Sprintf("%s?%s", url, f.ToQuery())
+		reqURL = fmt.Sprintf("%s?%s", reqURL, f.ToQuery())
 	}
-	if err := s.c.GET(url, &resModel); err != nil {
+	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}
 
@@ -50,8 +51,8 @@ func (s *Service) GetAccount(planID, accountID string) (*Account, error) {
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/accounts/%s", planID, accountID)
-	if err := s.c.GET(url, &resModel); err != nil {
+	reqURL := fmt.Sprintf("/plans/%s/accounts/%s", url.PathEscape(planID), url.PathEscape(accountID))
+	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}
 	return resModel.Data.Account, nil
@@ -77,8 +78,8 @@ func (s *Service) CreateAccount(planID string, p PayloadAccount) (*Account, erro
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/accounts", planID)
-	if err := s.c.POST(url, &resModel, buf); err != nil {
+	reqURL := fmt.Sprintf("/plans/%s/accounts", url.PathEscape(planID))
+	if err := s.c.POST(reqURL, &resModel, buf); err != nil {
 		return nil, err
 	}
 	return resModel.Data.Account, nil

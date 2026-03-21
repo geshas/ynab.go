@@ -3,6 +3,7 @@ package category
 import (
 	"encoding/json"
 	"fmt"
+	"net/url"
 
 	"github.com/geshas/ynab.go/api"
 )
@@ -29,11 +30,11 @@ func (s *Service) GetCategories(planID string, f *api.Filter) (*SearchResultSnap
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/categories", planID)
+	reqURL := fmt.Sprintf("/plans/%s/categories", url.PathEscape(planID))
 	if f != nil {
-		url = fmt.Sprintf("%s?%s", url, f.ToQuery())
+		reqURL = fmt.Sprintf("%s?%s", reqURL, f.ToQuery())
 	}
-	if err := s.c.GET(url, &resModel); err != nil {
+	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}
 
@@ -52,8 +53,8 @@ func (s *Service) GetCategory(planID, categoryID string) (*Category, error) {
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/categories/%s", planID, categoryID)
-	if err := s.c.GET(url, &resModel); err != nil {
+	reqURL := fmt.Sprintf("/plans/%s/categories/%s", url.PathEscape(planID), url.PathEscape(categoryID))
+	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}
 	return resModel.Data.Category, nil
@@ -80,8 +81,9 @@ func (s *Service) getCategoryForMonth(planID, categoryID, month string) (*Catego
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/months/%s/categories/%s", planID, month, categoryID)
-	if err := s.c.GET(url, &resModel); err != nil {
+	reqURL := fmt.Sprintf("/plans/%s/months/%s/categories/%s",
+		url.PathEscape(planID), url.PathEscape(month), url.PathEscape(categoryID))
+	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}
 	return resModel.Data.Category, nil
@@ -123,10 +125,10 @@ func (s *Service) updateCategoryForMonth(planID, categoryID, month string,
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/months/%s/categories/%s", planID,
-		month, categoryID)
+	reqURL := fmt.Sprintf("/plans/%s/months/%s/categories/%s",
+		url.PathEscape(planID), url.PathEscape(month), url.PathEscape(categoryID))
 
-	if err := s.c.PATCH(url, &resModel, buf); err != nil {
+	if err := s.c.PATCH(reqURL, &resModel, buf); err != nil {
 		return nil, err
 	}
 	return resModel.Data.Category, nil
@@ -152,9 +154,9 @@ func (s *Service) UpdateCategory(planID, categoryID string, p PayloadCategory) (
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/categories/%s", planID, categoryID)
+	reqURL := fmt.Sprintf("/plans/%s/categories/%s", url.PathEscape(planID), url.PathEscape(categoryID))
 
-	if err := s.c.PATCH(url, &resModel, buf); err != nil {
+	if err := s.c.PATCH(reqURL, &resModel, buf); err != nil {
 		return nil, err
 	}
 	return resModel.Data.Category, nil
@@ -180,9 +182,9 @@ func (s *Service) CreateCategory(planID string, p PayloadCreateCategory) (*Categ
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/categories", planID)
+	reqURL := fmt.Sprintf("/plans/%s/categories", url.PathEscape(planID))
 
-	if err := s.c.POST(url, &resModel, buf); err != nil {
+	if err := s.c.POST(reqURL, &resModel, buf); err != nil {
 		return nil, err
 	}
 	return resModel.Data.Category, nil
@@ -208,9 +210,9 @@ func (s *Service) CreateCategoryGroup(planID string, p PayloadCreateCategoryGrou
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/category_groups", planID)
+	reqURL := fmt.Sprintf("/plans/%s/category_groups", url.PathEscape(planID))
 
-	if err := s.c.POST(url, &resModel, buf); err != nil {
+	if err := s.c.POST(reqURL, &resModel, buf); err != nil {
 		return nil, err
 	}
 	return resModel.Data.CategoryGroup, nil
@@ -236,9 +238,9 @@ func (s *Service) UpdateCategoryGroup(planID, categoryGroupID string, p PayloadU
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/category_groups/%s", planID, categoryGroupID)
+	reqURL := fmt.Sprintf("/plans/%s/category_groups/%s", url.PathEscape(planID), url.PathEscape(categoryGroupID))
 
-	if err := s.c.PATCH(url, &resModel, buf); err != nil {
+	if err := s.c.PATCH(reqURL, &resModel, buf); err != nil {
 		return nil, err
 	}
 	return resModel.Data.CategoryGroup, nil

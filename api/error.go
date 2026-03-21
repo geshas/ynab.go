@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -124,12 +125,23 @@ func (e *Error) IsServiceUnavailable() bool {
 
 // IsClientError returns true if the error is a client error (4xx)
 func (e *Error) IsClientError() bool {
-	return strings.HasPrefix(e.ID, "4")
+	return errorHTTPStatus(e.ID)/100 == 4
 }
 
 // IsServerError returns true if the error is a server error (5xx)
 func (e *Error) IsServerError() bool {
-	return strings.HasPrefix(e.ID, "5")
+	return errorHTTPStatus(e.ID)/100 == 5
+}
+
+// errorHTTPStatus parses the integer HTTP status code from a YNAB error ID
+// (e.g. "403.1" → 403, "500" → 500, "unknown" → 0).
+func errorHTTPStatus(id string) int {
+	prefix := strings.SplitN(id, ".", 2)[0]
+	n, err := strconv.Atoi(prefix)
+	if err != nil {
+		return 0
+	}
+	return n
 }
 
 // IsRetryable returns true if the error might be resolved by retrying the request

@@ -3,7 +3,7 @@ package transaction
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
+	"net/url"
 
 	"github.com/geshas/ynab.go/api"
 )
@@ -35,12 +35,12 @@ func (s *Service) GetTransactions(planID string, f *Filter) (*SearchResultSnapsh
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/transactions", planID)
+	reqURL := fmt.Sprintf("/plans/%s/transactions", url.PathEscape(planID))
 	if f != nil {
-		url = fmt.Sprintf("%s?%s", url, f.ToQuery())
+		reqURL = fmt.Sprintf("%s?%s", reqURL, f.ToQuery())
 	}
 
-	if err := s.c.GET(url, &resModel); err != nil {
+	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}
 
@@ -59,8 +59,8 @@ func (s *Service) GetTransaction(planID, transactionID string) (*Transaction, er
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/transactions/%s", planID, transactionID)
-	if err := s.c.GET(url, &resModel); err != nil {
+	reqURL := fmt.Sprintf("/plans/%s/transactions/%s", url.PathEscape(planID), url.PathEscape(transactionID))
+	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}
 	return resModel.Data.Transaction, nil
@@ -94,8 +94,8 @@ func (s *Service) CreateTransactions(planID string,
 		Data *OperationSummary `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/transactions", planID)
-	err = s.c.POST(url, &resModel, buf)
+	reqURL := fmt.Sprintf("/plans/%s/transactions", url.PathEscape(planID))
+	err = s.c.POST(reqURL, &resModel, buf)
 	if err != nil {
 		return nil, err
 	}
@@ -125,8 +125,8 @@ func (s *Service) BulkCreateTransactions(planID string,
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/transactions/bulk", planID)
-	if err := s.c.POST(url, &resModel, buf); err != nil {
+	reqURL := fmt.Sprintf("/plans/%s/transactions/bulk", url.PathEscape(planID))
+	if err := s.c.POST(reqURL, &resModel, buf); err != nil {
 		return nil, err
 	}
 	return resModel.Data.Bulk, nil
@@ -154,8 +154,8 @@ func (s *Service) UpdateTransaction(planID, transactionID string,
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/transactions/%s", planID, transactionID)
-	if err := s.c.PUT(url, &resModel, buf); err != nil {
+	reqURL := fmt.Sprintf("/plans/%s/transactions/%s", url.PathEscape(planID), url.PathEscape(transactionID))
+	if err := s.c.PUT(reqURL, &resModel, buf); err != nil {
 		return nil, err
 	}
 	return resModel.Data.Transaction, nil
@@ -181,8 +181,8 @@ func (s *Service) UpdateTransactions(planID string,
 		Data *OperationSummary `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/transactions", planID)
-	err = s.c.PATCH(url, &resModel, buf)
+	reqURL := fmt.Sprintf("/plans/%s/transactions", url.PathEscape(planID))
+	err = s.c.PATCH(reqURL, &resModel, buf)
 	if err != nil {
 		return nil, err
 	}
@@ -198,8 +198,8 @@ func (s *Service) DeleteTransaction(planID, transactionID string) (*Transaction,
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/transactions/%s", planID, transactionID)
-	err := s.c.DELETE(url, &resModel)
+	reqURL := fmt.Sprintf("/plans/%s/transactions/%s", url.PathEscape(planID), url.PathEscape(transactionID))
+	err := s.c.DELETE(reqURL, &resModel)
 	if err != nil {
 		return nil, err
 	}
@@ -219,12 +219,12 @@ func (s *Service) GetTransactionsByAccount(planID, accountID string,
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/accounts/%s/transactions", planID, accountID)
+	reqURL := fmt.Sprintf("/plans/%s/accounts/%s/transactions", url.PathEscape(planID), url.PathEscape(accountID))
 	if f != nil {
-		url = fmt.Sprintf("%s?%s", url, f.ToQuery())
+		reqURL = fmt.Sprintf("%s?%s", reqURL, f.ToQuery())
 	}
 
-	if err := s.c.GET(url, &resModel); err != nil {
+	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}
 
@@ -244,12 +244,12 @@ func (s *Service) GetTransactionsByMonth(planID, month string, f *Filter) (*Sear
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/months/%s/transactions", planID, month)
+	reqURL := fmt.Sprintf("/plans/%s/months/%s/transactions", url.PathEscape(planID), url.PathEscape(month))
 	if f != nil {
-		url = fmt.Sprintf("%s?%s", url, f.ToQuery())
+		reqURL = fmt.Sprintf("%s?%s", reqURL, f.ToQuery())
 	}
 
-	if err := s.c.GET(url, &resModel); err != nil {
+	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}
 
@@ -271,12 +271,12 @@ func (s *Service) GetTransactionsByCategory(planID, categoryID string,
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/categories/%s/transactions", planID, categoryID)
+	reqURL := fmt.Sprintf("/plans/%s/categories/%s/transactions", url.PathEscape(planID), url.PathEscape(categoryID))
 	if f != nil {
-		url = fmt.Sprintf("%s?%s", url, f.ToQuery())
+		reqURL = fmt.Sprintf("%s?%s", reqURL, f.ToQuery())
 	}
 
-	if err := s.c.GET(url, &resModel); err != nil {
+	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}
 
@@ -295,12 +295,12 @@ func (s *Service) GetTransactionsByPayee(planID, payeeID string,
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/payees/%s/transactions", planID, payeeID)
+	reqURL := fmt.Sprintf("/plans/%s/payees/%s/transactions", url.PathEscape(planID), url.PathEscape(payeeID))
 	if f != nil {
-		url = fmt.Sprintf("%s?%s", url, f.ToQuery())
+		reqURL = fmt.Sprintf("%s?%s", reqURL, f.ToQuery())
 	}
 
-	if err := s.c.GET(url, &resModel); err != nil {
+	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}
 
@@ -324,12 +324,12 @@ func (s *Service) GetScheduledTransactions(planID string, f *api.Filter) (*Sched
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/scheduled_transactions", planID)
+	reqURL := fmt.Sprintf("/plans/%s/scheduled_transactions", url.PathEscape(planID))
 	if f != nil {
-		url = fmt.Sprintf("%s?%s", url, f.ToQuery())
+		reqURL = fmt.Sprintf("%s?%s", reqURL, f.ToQuery())
 	}
 
-	if err := s.c.GET(url, &resModel); err != nil {
+	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}
 
@@ -344,15 +344,15 @@ func (s *Service) GetScheduledTransactions(planID string, f *api.Filter) (*Sched
 func (s *Service) GetScheduledTransaction(planID, scheduledTransactionID string) (*Scheduled, error) {
 	resModel := struct {
 		Data struct {
-			ScheduledTransactions *Scheduled `json:"scheduled_transaction"`
+			ScheduledTransaction *Scheduled `json:"scheduled_transaction"`
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/scheduled_transactions/%s", planID, scheduledTransactionID)
-	if err := s.c.GET(url, &resModel); err != nil {
+	reqURL := fmt.Sprintf("/plans/%s/scheduled_transactions/%s", url.PathEscape(planID), url.PathEscape(scheduledTransactionID))
+	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}
-	return resModel.Data.ScheduledTransactions, nil
+	return resModel.Data.ScheduledTransaction, nil
 }
 
 // Filter represents the optional filter while fetching transactions
@@ -364,18 +364,17 @@ type Filter struct {
 
 // ToQuery returns the filters as a HTTP query string
 func (f *Filter) ToQuery() string {
-	pairs := make([]string, 0, 3)
+	v := url.Values{}
 	if f.Since != nil && !f.Since.IsZero() {
-		pairs = append(pairs, fmt.Sprintf("since_date=%s",
-			api.DateFormat(*f.Since)))
+		v.Set("since_date", api.DateFormat(*f.Since))
 	}
 	if f.Type != nil {
-		pairs = append(pairs, fmt.Sprintf("type=%s", string(*f.Type)))
+		v.Set("type", string(*f.Type))
 	}
 	if f.LastKnowledgeOfServer != nil {
-		pairs = append(pairs, fmt.Sprintf("last_knowledge_of_server=%d", *f.LastKnowledgeOfServer))
+		v.Set("last_knowledge_of_server", fmt.Sprintf("%d", *f.LastKnowledgeOfServer))
 	}
-	return strings.Join(pairs, "&")
+	return v.Encode()
 }
 
 // CreateScheduledTransaction creates a new scheduled transaction for a plan
@@ -398,8 +397,8 @@ func (s *Service) CreateScheduledTransaction(planID string, p PayloadScheduledTr
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/scheduled_transactions", planID)
-	if err := s.c.POST(url, &resModel, buf); err != nil {
+	reqURL := fmt.Sprintf("/plans/%s/scheduled_transactions", url.PathEscape(planID))
+	if err := s.c.POST(reqURL, &resModel, buf); err != nil {
 		return nil, err
 	}
 	return resModel.Data.ScheduledTransaction, nil
@@ -425,8 +424,8 @@ func (s *Service) UpdateScheduledTransaction(planID, scheduledTransactionID stri
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/scheduled_transactions/%s", planID, scheduledTransactionID)
-	if err := s.c.PUT(url, &resModel, buf); err != nil {
+	reqURL := fmt.Sprintf("/plans/%s/scheduled_transactions/%s", url.PathEscape(planID), url.PathEscape(scheduledTransactionID))
+	if err := s.c.PUT(reqURL, &resModel, buf); err != nil {
 		return nil, err
 	}
 	return resModel.Data.ScheduledTransaction, nil
@@ -441,8 +440,8 @@ func (s *Service) DeleteScheduledTransaction(planID, scheduledTransactionID stri
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/scheduled_transactions/%s", planID, scheduledTransactionID)
-	err := s.c.DELETE(url, &resModel)
+	reqURL := fmt.Sprintf("/plans/%s/scheduled_transactions/%s", url.PathEscape(planID), url.PathEscape(scheduledTransactionID))
+	err := s.c.DELETE(reqURL, &resModel)
 	if err != nil {
 		return nil, err
 	}
@@ -456,8 +455,8 @@ func (s *Service) ImportTransactions(planID string) (*ImportResult, error) {
 		Data *ImportResult `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/transactions/import", planID)
-	if err := s.c.POST(url, &resModel, nil); err != nil {
+	reqURL := fmt.Sprintf("/plans/%s/transactions/import", url.PathEscape(planID))
+	if err := s.c.POST(reqURL, &resModel, nil); err != nil {
 		return nil, err
 	}
 	return resModel.Data, nil
