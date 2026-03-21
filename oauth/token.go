@@ -9,7 +9,11 @@ import (
 	"net/http"
 	"net/url"
 	"sync"
+	"time"
 )
+
+// DefaultTokenHTTPTimeout is the default timeout for token exchange/refresh requests.
+const DefaultTokenHTTPTimeout = 30 * time.Second
 
 // TokenManager handles token refresh and management
 type TokenManager struct {
@@ -29,7 +33,7 @@ type TokenManager struct {
 func NewTokenManager(config *Config, storage TokenStorage) *TokenManager {
 	return &TokenManager{
 		config:  config,
-		client:  http.DefaultClient,
+		client:  &http.Client{Timeout: DefaultTokenHTTPTimeout},
 		storage: storage,
 	}
 }
@@ -60,47 +64,47 @@ func (tm *TokenManager) SetToken(token *Token) error {
 	return nil
 }
 
-// GetToken returns the current token, refreshing if necessary
+// GetToken returns the current token, refreshing if necessary.
+// It is safe for concurrent use: at most one refresh will run at a time.
 func (tm *TokenManager) GetToken(ctx context.Context) (*Token, error) {
-	tm.mu.RLock()
-	currentToken := tm.token
-	tm.mu.RUnlock()
+	tm.mu.Lock()
+	defer tm.mu.Unlock()
 
 	// If no token is loaded, try to load from storage
-	if currentToken == nil && tm.storage != nil {
+	if tm.token == nil && tm.storage != nil {
 		loadedToken, err := tm.storage.LoadToken()
 		if err == nil && loadedToken != nil {
-			tm.mu.Lock()
 			tm.token = loadedToken
-			currentToken = loadedToken
-			tm.mu.Unlock()
 		}
 	}
 
 	// If still no token, return error
-	if currentToken == nil {
+	if tm.token == nil {
 		return nil, fmt.Errorf("no token available")
 	}
 
 	// If token is valid, return it
-	if currentToken.IsValid() {
-		return currentToken, nil
+	if tm.token.IsValid() {
+		return tm.token, nil
 	}
 
 	// If token is expired but can't be refreshed, return error
-	if !currentToken.CanRefresh() {
+	if !tm.token.CanRefresh() {
 		return nil, ErrTokenExpired
 	}
 
-	// Refresh the token
-	refreshedToken, err := tm.refreshToken(ctx, currentToken)
+	// Refresh the token (lock is already held — refreshToken must not re-acquire it)
+	refreshedToken, err := tm.refreshToken(ctx, tm.token)
 	if err != nil {
 		return nil, fmt.Errorf("failed to refresh token: %w", err)
 	}
 
-	// Update the stored token
-	if err := tm.SetToken(refreshedToken); err != nil {
-		return nil, fmt.Errorf("failed to save refreshed token: %w", err)
+	// Persist directly to avoid deadlock from calling SetToken (which also locks)
+	tm.token = refreshedToken
+	if tm.storage != nil {
+		if err := tm.storage.SaveToken(refreshedToken); err != nil {
+			return nil, fmt.Errorf("failed to save refreshed token: %w", err)
+		}
 	}
 
 	// Call refresh callback if set

@@ -8,19 +8,25 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 const APIEndpoint = "https://api.ynab.com/v1"
+
+// DefaultHTTPTimeout is the default timeout for outgoing HTTP requests.
+const DefaultHTTPTimeout = 30 * time.Second
 
 // HTTPClient represents a configurable HTTP client
 type HTTPClient struct {
 	client *http.Client
 }
 
-// NewHTTPClient creates a new HTTP client with default configuration
+// NewHTTPClient creates a new HTTP client with a default 30s timeout
 func NewHTTPClient() *HTTPClient {
 	return &HTTPClient{
-		client: http.DefaultClient,
+		client: &http.Client{
+			Timeout: DefaultHTTPTimeout,
+		},
 	}
 }
 
