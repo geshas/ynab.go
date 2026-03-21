@@ -1,0 +1,45 @@
+api/filter.go
+  b3e1b9f0187e95bf 7-10,23-25
+oauth/config.go
+  b3e1b9f0187e95bf 9,134-136,245-272
+api/payee/service.go
+  b3e1b9f0187e95bf 1-135
+api/transaction/service.go
+  b3e1b9f0187e95bf 1-463
+api/account/service.go
+  b3e1b9f0187e95bf 1-86
+api/month/service.go
+  b3e1b9f0187e95bf 1-59
+api/error.go
+  b3e1b9f0187e95bf 5,128,133-144
+README.md
+  b3e1b9f0187e95bf 763-767,771-775,799-808,931-934,938-941
+api/category/service.go
+  b3e1b9f0187e95bf 1-247
+api/plan/service.go
+  b3e1b9f0187e95bf 1-95
+api/money_movement/service.go
+  b3e1b9f0187e95bf 1-124
+oauth/types.go
+  b3e1b9f0187e95bf 115,117-118
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.17",
+  "base_commit_sha": "502a17aaee484fd0a4986518f28079a5498d0bf2",
+  "prompts": {
+    "b3e1b9f0187e95bf": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_2ed95fceaffeRWTdOw6x3Y9NFh",
+        "model": "github-copilot/claude-sonnet-4.6"
+      },
+      "human_author": "Evgeny <evgeny@example.com>",
+      "messages": [],
+      "total_additions": 1351,
+      "total_deletions": 1276,
+      "accepted_lines": 1293,
+      "overriden_lines": 0
+    }
+  }
+}
