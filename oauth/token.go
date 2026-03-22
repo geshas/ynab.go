@@ -105,10 +105,20 @@ func (tm *TokenManager) GetToken(ctx context.Context) (*Token, error) {
 	}
 
 	callback, err := tm.storeToken(refreshedToken)
-	tm.refreshMu.Unlock()
 	if err != nil {
-		return nil, fmt.Errorf("failed to save refreshed token: %w", err)
+		tm.mu.Lock()
+		tm.token = refreshedToken
+		callback = tm.onTokenRefresh
+		tm.mu.Unlock()
+		tm.refreshMu.Unlock()
+
+		if callback != nil {
+			callback(refreshedToken)
+		}
+
+		return refreshedToken, fmt.Errorf("failed to save refreshed token: %w", err)
 	}
+	tm.refreshMu.Unlock()
 
 	if callback != nil {
 		callback(refreshedToken)
@@ -165,7 +175,16 @@ func (tm *TokenManager) RefreshToken(ctx context.Context) (*Token, error) {
 
 	callback, err := tm.storeToken(refreshedToken)
 	if err != nil {
-		return nil, fmt.Errorf("failed to save refreshed token: %w", err)
+		tm.mu.Lock()
+		tm.token = refreshedToken
+		callback = tm.onTokenRefresh
+		tm.mu.Unlock()
+
+		if callback != nil {
+			callback(refreshedToken)
+		}
+
+		return refreshedToken, fmt.Errorf("failed to save refreshed token: %w", err)
 	}
 
 	if callback != nil {

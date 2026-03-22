@@ -207,7 +207,7 @@ func TestTokenManagerRefreshTokenSerializesConcurrentRefreshes(t *testing.T) {
 	assert.Equal(t, int32(1), transport.calls.Load())
 }
 
-func TestTokenManagerGetTokenDoesNotMutateStateOnStorageFailure(t *testing.T) {
+func TestTokenManagerGetTokenKeepsRefreshedTokenOnStorageFailure(t *testing.T) {
 	config := NewOAuthConfig(Config{
 		ClientID:     "test-client",
 		ClientSecret: "test-secret",
@@ -235,12 +235,14 @@ func TestTokenManagerGetTokenDoesNotMutateStateOnStorageFailure(t *testing.T) {
 		}),
 	})
 
-	_, err := tm.GetToken(context.Background())
+	token, err := tm.GetToken(context.Background())
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "failed to save refreshed token")
 
+	require.NotNil(t, token)
+	assert.Equal(t, "fresh-access-token", token.AccessToken)
 	require.NotNil(t, tm.token)
-	assert.Equal(t, "expired-access-token", tm.token.AccessToken)
+	assert.Equal(t, "fresh-access-token", tm.token.AccessToken)
 	require.NotNil(t, storage.lastSavedToken)
 	assert.Equal(t, "fresh-access-token", storage.lastSavedToken.AccessToken)
 	assert.Equal(t, "expired-access-token", storage.token.AccessToken)
