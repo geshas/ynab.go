@@ -23,7 +23,7 @@ type Account struct {
 	Balance int64 `json:"balance"`
 	// ClearedBalance The current cleared balance of the account in milliunits format
 	ClearedBalance int64 `json:"cleared_balance"`
-	// ClearedBalance The current uncleared balance of the account in milliunits format
+	// UnclearedBalance The current uncleared balance of the account in milliunits format
 	UnclearedBalance int64 `json:"uncleared_balance"`
 	// TransferPayeeID The payee id which should be used when transferring to this account
 	TransferPayeeID *string `json:"transfer_payee_id"`
