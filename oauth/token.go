@@ -138,7 +138,7 @@ func (tm *TokenManager) ExchangeCode(ctx context.Context, code string) (*Token, 
 func (tm *TokenManager) RefreshToken(ctx context.Context) (*Token, error) {
 	currentToken, err := tm.ensureTokenLoaded()
 	if err != nil {
-		return nil, fmt.Errorf("no token to refresh")
+		return nil, fmt.Errorf("no token to refresh: %w", err)
 	}
 
 	tm.runBeforeRefreshLockHook()
@@ -147,7 +147,7 @@ func (tm *TokenManager) RefreshToken(ctx context.Context) (*Token, error) {
 
 	currentToken, err = tm.ensureTokenLoaded()
 	if err != nil {
-		return nil, fmt.Errorf("no token to refresh")
+		return nil, fmt.Errorf("no token to refresh: %w", err)
 	}
 
 	if currentToken.IsValid() {
