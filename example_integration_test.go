@@ -103,8 +103,9 @@ func Example_advancedOAuthUsage() {
 		os.Getenv("YNAB_REDIRECT_URI"),
 	)
 
-	// Custom storage with encryption
-	encryptionKey := []byte("your-32-byte-encryption-key-here")
+	// Custom storage with encryption.
+	// Key must be exactly 16, 24, or 32 bytes for AES-128, AES-192, or AES-256.
+	encryptionKey := []byte("your-encryption-key-32-bytes-key") // 32 bytes
 	storage, err := oauth.NewEncryptedFileStorage("secure-tokens.json", encryptionKey)
 	if err != nil {
 		log.Fatal(err)
