@@ -305,7 +305,10 @@ func (tm *TokenManager) ensureTokenLoaded() (*Token, error) {
 
 	if storage != nil {
 		loadedToken, err := storage.LoadToken()
-		if err == nil && loadedToken != nil {
+		if err != nil {
+			return nil, fmt.Errorf("failed to load token from storage: %w", err)
+		}
+		if loadedToken != nil {
 			tm.mu.Lock()
 			if tm.token == nil {
 				tm.token = loadedToken
