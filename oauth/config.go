@@ -252,6 +252,9 @@ func validateRedirectURI(raw string) error {
 	if !u.IsAbs() {
 		return fmt.Errorf("redirect URI must be absolute")
 	}
+	if u.Hostname() == "" {
+		return fmt.Errorf("redirect URI must include a host")
+	}
 	scheme := strings.ToLower(u.Scheme)
 	switch scheme {
 	case "https":
