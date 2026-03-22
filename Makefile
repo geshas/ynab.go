@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-.PHONY: lint test coverage help
+.PHONY: lint test coverage help 
 
 GO_PACKAGES=$(shell go list ./...)
 GO ?= $(shell command -v go 2> /dev/null)
