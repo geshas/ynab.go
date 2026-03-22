@@ -726,7 +726,10 @@ storage := ynab.NewMemoryStorage()
 
 // Encrypted storage
 key := []byte("your-encryption-key")
-storage := oauth.NewEncryptedFileStorage("tokens.json", key)
+storage, err := oauth.NewEncryptedFileStorage("tokens.json", key)
+if err != nil {
+    log.Fatal(err)
+}
 
 // Custom storage (implement oauth.TokenStorage interface)
 type DatabaseStorage struct { /* your implementation */ }

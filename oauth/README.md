@@ -157,7 +157,10 @@ storage := ynab.NewMemoryStorage() // Not persistent
 #### Encrypted Storage
 ```go
 key := []byte("your-encryption-key")
-storage := oauth.NewEncryptedFileStorage("token.json", key)
+storage, err := oauth.NewEncryptedFileStorage("token.json", key)
+if err != nil {
+    log.Fatal(err)
+}
 ```
 
 #### Chained Storage (Fallback)
@@ -494,11 +497,17 @@ storage := oauth.NewFileStorage("tokens.json").WithFileMode(0600)
 
 // Encrypted storage for sensitive environments
 key := generateSecureKey() // Use proper key derivation
-storage := oauth.NewEncryptedFileStorage("tokens.json", key)
+storage, err := oauth.NewEncryptedFileStorage("tokens.json", key)
+if err != nil {
+    log.Fatal(err)
+}
 
 // Environment-specific configuration
 if isProduction() {
-    storage = oauth.NewEncryptedFileStorage(getSecureTokenPath(), getEncryptionKey())
+    storage, err = oauth.NewEncryptedFileStorage(getSecureTokenPath(), getEncryptionKey())
+    if err != nil {
+        log.Fatal(err)
+    }
 } else {
     storage = oauth.NewFileStorage("dev-tokens.json")
 }

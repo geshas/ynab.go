@@ -186,7 +186,7 @@ func TestService_UpdateCategoryGroup(t *testing.T) {
 
 		newName := "Updated Category Group"
 		payload := category.PayloadUpdateCategoryGroup{
-			Name: &newName,
+			Name: newName,
 		}
 
 		url := "https://api.ynab.com/v1/plans/plan-id-123/category_groups/group-456"
