@@ -726,7 +726,10 @@ storage := ynab.NewMemoryStorage()
 
 // Encrypted storage
 key := []byte("your-encryption-key")
-storage := oauth.NewEncryptedFileStorage("tokens.json", key)
+storage, err := oauth.NewEncryptedFileStorage("tokens.json", key)
+if err != nil {
+    log.Fatal(err)
+}
 
 // Custom storage (implement oauth.TokenStorage interface)
 type DatabaseStorage struct { /* your implementation */ }
@@ -760,12 +763,19 @@ func main() {
 func handleLogin(w http.ResponseWriter, r *http.Request) {
     flow := ynab.NewAuthorizationCodeFlow(config)
     
-    state, _ := config.GenerateState()
+    state, err := config.GenerateState()
+    if err != nil {
+        http.Error(w, "Failed to generate state", http.StatusInternalServerError)
+        return
+    }
     // Store state in session for CSRF protection
     session.Set("oauth_state", state)
     
-    authURL, _ := flow.GetAuthorizationURL(state)
-    http.Redirect(w, r, authURL, http.StatusFound)
+    authURL, err := flow.GetAuthorizationURL(state)
+    if err != nil {
+        http.Error(w, "Failed to build auth URL", http.StatusInternalServerError)
+        return
+    }    http.Redirect(w, r, authURL, http.StatusFound)
 }
 
 func handleCallback(w http.ResponseWriter, r *http.Request) {
@@ -789,8 +799,16 @@ func handleDashboard(w http.ResponseWriter, r *http.Request) {
     userID := getCurrentUserID(r)
     token := getUserToken(userID)
     
-    client, _ := ynab.NewOAuthClientFromToken(config, token)
-    budgets, _ := client.Plan().GetPlans()
+    client, err := ynab.NewOAuthClientFromToken(config, token)
+    if err != nil {
+        http.Error(w, "Failed to create client", http.StatusInternalServerError)
+        return
+    }
+    budgets, err := client.Plan().GetPlans()
+    if err != nil {
+        http.Error(w, "Failed to fetch budgets", http.StatusInternalServerError)
+        return
+    }
     
     // Render dashboard with budgets...
 }
@@ -913,11 +931,17 @@ for _, tx := range transactions {
 **Use delta requests** to fetch only changes:
 ```go
 // Get full data first
-snapshot, _ := client.Plan().GetPlan(planID, nil)
+snapshot, err := client.Plan().GetPlan(planID, nil)
+if err != nil {
+    log.Fatal(err)
+}
 
 // Later, get only changes
 filter := &api.Filter{LastKnowledgeOfServer: snapshot.ServerKnowledge}
-changes, _ := client.Plan().GetPlan(planID, filter)
+changes, err := client.Plan().GetPlan(planID, filter)
+if err != nil {
+    log.Fatal(err)
+}
 ```
 
 **Use batch operations** instead of individual calls:

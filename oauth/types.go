@@ -112,9 +112,10 @@ func (t *Token) CanRefresh() bool {
 
 // SetExpiration calculates and sets the expiration time
 func (t *Token) SetExpiration(expiresIn int64) {
+	now := time.Now()
 	t.ExpiresIn = expiresIn
-	t.ExpiresAt = time.Now().Add(time.Duration(expiresIn) * time.Second)
-	t.CreatedAt = time.Now()
+	t.CreatedAt = now
+	t.ExpiresAt = now.Add(time.Duration(expiresIn) * time.Second)
 }
 
 // ErrorResponse represents an OAuth error response

@@ -9,7 +9,11 @@ import (
 	"net/http"
 	"net/url"
 	"sync"
+	"time"
 )
+
+// DefaultTokenHTTPTimeout is the default timeout for token exchange/refresh requests.
+const DefaultTokenHTTPTimeout = 30 * time.Second
 
 // TokenManager handles token refresh and management
 type TokenManager struct {
@@ -18,18 +22,22 @@ type TokenManager struct {
 	storage TokenStorage
 
 	// Token access mutex
-	mu    sync.RWMutex
-	token *Token
+	mu        sync.RWMutex
+	refreshMu sync.Mutex
+	token     *Token
 
 	// Callback for token refresh events
 	onTokenRefresh func(*Token)
+
+	hookMu            sync.Mutex
+	beforeRefreshLock func()
 }
 
 // NewTokenManager creates a new token manager
 func NewTokenManager(config *Config, storage TokenStorage) *TokenManager {
 	return &TokenManager{
 		config:  config,
-		client:  http.DefaultClient,
+		client:  &http.Client{Timeout: DefaultTokenHTTPTimeout},
 		storage: storage,
 	}
 }
@@ -48,64 +56,72 @@ func (tm *TokenManager) WithTokenRefreshCallback(callback func(*Token)) *TokenMa
 
 // SetToken sets the current token
 func (tm *TokenManager) SetToken(token *Token) error {
-	tm.mu.Lock()
-	defer tm.mu.Unlock()
+	tm.refreshMu.Lock()
+	defer tm.refreshMu.Unlock()
 
-	tm.token = token
-
-	if tm.storage != nil {
-		return tm.storage.SaveToken(token)
-	}
-
-	return nil
+	_, err := tm.storeToken(token)
+	return err
 }
 
-// GetToken returns the current token, refreshing if necessary
+// GetToken returns the current token, refreshing if necessary.
+// It is safe for concurrent use: at most one refresh will run at a time.
 func (tm *TokenManager) GetToken(ctx context.Context) (*Token, error) {
-	tm.mu.RLock()
-	currentToken := tm.token
-	tm.mu.RUnlock()
-
-	// If no token is loaded, try to load from storage
-	if currentToken == nil && tm.storage != nil {
-		loadedToken, err := tm.storage.LoadToken()
-		if err == nil && loadedToken != nil {
-			tm.mu.Lock()
-			tm.token = loadedToken
-			currentToken = loadedToken
-			tm.mu.Unlock()
-		}
+	currentToken, err := tm.ensureTokenLoaded()
+	if err != nil {
+		return nil, err
 	}
 
-	// If still no token, return error
-	if currentToken == nil {
-		return nil, fmt.Errorf("no token available")
-	}
-
-	// If token is valid, return it
 	if currentToken.IsValid() {
 		return currentToken, nil
 	}
 
-	// If token is expired but can't be refreshed, return error
 	if !currentToken.CanRefresh() {
 		return nil, ErrTokenExpired
 	}
 
-	// Refresh the token
+	tm.runBeforeRefreshLockHook()
+	tm.refreshMu.Lock()
+
+	currentToken, err = tm.ensureTokenLoaded()
+	if err != nil {
+		tm.refreshMu.Unlock()
+		return nil, err
+	}
+
+	if currentToken.IsValid() {
+		tm.refreshMu.Unlock()
+		return currentToken, nil
+	}
+
+	if !currentToken.CanRefresh() {
+		tm.refreshMu.Unlock()
+		return nil, ErrTokenExpired
+	}
+
 	refreshedToken, err := tm.refreshToken(ctx, currentToken)
 	if err != nil {
+		tm.refreshMu.Unlock()
 		return nil, fmt.Errorf("failed to refresh token: %w", err)
 	}
 
-	// Update the stored token
-	if err := tm.SetToken(refreshedToken); err != nil {
-		return nil, fmt.Errorf("failed to save refreshed token: %w", err)
-	}
+	callback, err := tm.storeToken(refreshedToken)
+	if err != nil {
+		tm.mu.Lock()
+		tm.token = refreshedToken
+		callback = tm.onTokenRefresh
+		tm.mu.Unlock()
+		tm.refreshMu.Unlock()
 
-	// Call refresh callback if set
-	if tm.onTokenRefresh != nil {
-		tm.onTokenRefresh(refreshedToken)
+		if callback != nil {
+			callback(refreshedToken)
+		}
+
+		return refreshedToken, fmt.Errorf("failed to save refreshed token: %w", err)
+	}
+	tm.refreshMu.Unlock()
+
+	if callback != nil {
+		callback(refreshedToken)
 	}
 
 	return refreshedToken, nil
@@ -130,12 +146,22 @@ func (tm *TokenManager) ExchangeCode(ctx context.Context, code string) (*Token, 
 
 // RefreshToken refreshes the current token
 func (tm *TokenManager) RefreshToken(ctx context.Context) (*Token, error) {
-	tm.mu.RLock()
-	currentToken := tm.token
-	tm.mu.RUnlock()
+	currentToken, err := tm.ensureTokenLoaded()
+	if err != nil {
+		return nil, fmt.Errorf("no token to refresh: %w", err)
+	}
 
-	if currentToken == nil {
-		return nil, fmt.Errorf("no token to refresh")
+	tm.runBeforeRefreshLockHook()
+	tm.refreshMu.Lock()
+	defer tm.refreshMu.Unlock()
+
+	currentToken, err = tm.ensureTokenLoaded()
+	if err != nil {
+		return nil, fmt.Errorf("no token to refresh: %w", err)
+	}
+
+	if currentToken.IsValid() {
+		return currentToken, nil
 	}
 
 	if !currentToken.CanRefresh() {
@@ -147,8 +173,22 @@ func (tm *TokenManager) RefreshToken(ctx context.Context) (*Token, error) {
 		return nil, err
 	}
 
-	if err := tm.SetToken(refreshedToken); err != nil {
-		return nil, fmt.Errorf("failed to save refreshed token: %w", err)
+	callback, err := tm.storeToken(refreshedToken)
+	if err != nil {
+		tm.mu.Lock()
+		tm.token = refreshedToken
+		callback = tm.onTokenRefresh
+		tm.mu.Unlock()
+
+		if callback != nil {
+			callback(refreshedToken)
+		}
+
+		return refreshedToken, fmt.Errorf("failed to save refreshed token: %w", err)
+	}
+
+	if callback != nil {
+		callback(refreshedToken)
 	}
 
 	return refreshedToken, nil
@@ -237,14 +277,19 @@ func (tm *TokenManager) exchangeToken(ctx context.Context, tokenRequest *TokenRe
 
 // ClearToken removes the current token
 func (tm *TokenManager) ClearToken() error {
+	tm.refreshMu.Lock()
+	defer tm.refreshMu.Unlock()
+
 	tm.mu.Lock()
 	defer tm.mu.Unlock()
 
-	tm.token = nil
-
 	if tm.storage != nil {
-		return tm.storage.ClearToken()
+		if err := tm.storage.ClearToken(); err != nil {
+			return err
+		}
 	}
+
+	tm.token = nil
 
 	return nil
 }
@@ -265,6 +310,71 @@ func (tm *TokenManager) GetAccessToken(ctx context.Context) (string, error) {
 	}
 
 	return token.AccessToken, nil
+}
+
+func (tm *TokenManager) ensureTokenLoaded() (*Token, error) {
+	tm.mu.RLock()
+	currentToken := tm.token
+	storage := tm.storage
+	tm.mu.RUnlock()
+
+	if currentToken != nil {
+		return currentToken, nil
+	}
+
+	if storage != nil {
+		loadedToken, err := storage.LoadToken()
+		if err != nil {
+			return nil, fmt.Errorf("failed to load token from storage: %w", err)
+		}
+		if loadedToken != nil {
+			tm.mu.Lock()
+			if tm.token == nil {
+				tm.token = loadedToken
+			}
+			currentToken = tm.token
+			tm.mu.Unlock()
+			return currentToken, nil
+		}
+	}
+
+	return nil, fmt.Errorf("no token available")
+}
+
+func (tm *TokenManager) storeToken(token *Token) (func(*Token), error) {
+	tm.mu.RLock()
+	storage := tm.storage
+	tm.mu.RUnlock()
+
+	if storage != nil {
+		if err := storage.SaveToken(token); err != nil {
+			return nil, err
+		}
+	}
+
+	tm.mu.Lock()
+	tm.token = token
+	callback := tm.onTokenRefresh
+	tm.mu.Unlock()
+
+	return callback, nil
+}
+
+func (tm *TokenManager) setBeforeRefreshLockHook(hook func()) {
+	tm.hookMu.Lock()
+	tm.beforeRefreshLock = hook
+	tm.hookMu.Unlock()
+}
+
+func (tm *TokenManager) runBeforeRefreshLockHook() {
+	tm.hookMu.Lock()
+	hook := tm.beforeRefreshLock
+	tm.beforeRefreshLock = nil
+	tm.hookMu.Unlock()
+
+	if hook != nil {
+		hook()
+	}
 }
 
 // TokenSource creates a token source for use with oauth2 compatible libraries

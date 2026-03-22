@@ -48,7 +48,7 @@ func TestService_GetMoneyMovements(t *testing.T) {
 
 		expectedDate, _ := api.DateFromString("2024-01-01")
 		assert.Equal(t, "mm-123", snapshot.MoneyMovements[0].ID)
-		assert.Equal(t, &expectedDate, snapshot.MoneyMovements[0].Month)
+		assert.Equal(t, expectedDate, snapshot.MoneyMovements[0].Month)
 		assert.Equal(t, int64(-15000), snapshot.MoneyMovements[0].Amount)
 	})
 

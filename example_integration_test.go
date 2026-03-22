@@ -75,9 +75,10 @@ func Example_tokenBasedVsOAuth() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	clientWithOAuth := ynab.NewOAuthClient(config, oauthClient.TokenManager())
 
 	// Both clients implement the same interface
-	clients := []ynab.ClientServicer{tokenClient, oauthClient}
+	clients := []ynab.ClientServicer{tokenClient, clientWithOAuth}
 
 	for i, client := range clients {
 		budgets, err := client.Plan().GetPlans()
@@ -104,7 +105,10 @@ func Example_advancedOAuthUsage() {
 
 	// Custom storage with encryption
 	encryptionKey := []byte("your-32-byte-encryption-key-here")
-	storage := oauth.NewEncryptedFileStorage("secure-tokens.json", encryptionKey)
+	storage, err := oauth.NewEncryptedFileStorage("secure-tokens.json", encryptionKey)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// Build client with advanced features
 	client, err := ynab.NewOAuthClientBuilder(config).

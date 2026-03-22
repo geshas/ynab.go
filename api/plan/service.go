@@ -2,6 +2,7 @@ package plan
 
 import (
 	"fmt"
+	"net/url"
 
 	"github.com/geshas/ynab.go/api"
 )
@@ -32,12 +33,12 @@ func (s *Service) GetPlansWithAccounts(includeAccounts bool) ([]*Summary, error)
 		} `json:"data"`
 	}{}
 
-	url := "/plans"
+	reqURL := "/plans"
 	if includeAccounts {
-		url = "/plans?include_accounts=true"
+		reqURL = "/plans?include_accounts=true"
 	}
 
-	if err := s.c.GET(url, &resModel); err != nil {
+	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}
 	return resModel.Data.Plans, nil
@@ -54,12 +55,12 @@ func (s *Service) GetPlan(planID string, f *api.Filter) (*Snapshot, error) {
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s", planID)
+	reqURL := fmt.Sprintf("/plans/%s", url.PathEscape(planID))
 	if f != nil {
-		url = fmt.Sprintf("%s?%s", url, f.ToQuery())
+		reqURL = fmt.Sprintf("%s?%s", reqURL, f.ToQuery())
 	}
 
-	if err := s.c.GET(url, &resModel); err != nil {
+	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}
 
@@ -85,8 +86,8 @@ func (s *Service) GetPlanSettings(planID string) (*Settings, error) {
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/settings", planID)
-	if err := s.c.GET(url, &resModel); err != nil {
+	reqURL := fmt.Sprintf("/plans/%s/settings", url.PathEscape(planID))
+	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}
 

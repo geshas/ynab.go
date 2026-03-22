@@ -1,10 +1,15 @@
 package oauth
 
 import (
+	"crypto/aes"
+	"crypto/cipher"
+	"crypto/rand"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
+	"sync"
 )
 
 // TokenStorage defines the interface for token persistence
@@ -24,6 +29,7 @@ type TokenStorage interface {
 
 // MemoryStorage implements in-memory token storage (not persistent)
 type MemoryStorage struct {
+	mu    sync.RWMutex
 	token *Token
 }
 
@@ -34,12 +40,16 @@ func NewMemoryStorage() *MemoryStorage {
 
 // SaveToken saves the token in memory
 func (s *MemoryStorage) SaveToken(token *Token) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
 	s.token = token
 	return nil
 }
 
 // LoadToken loads the token from memory
 func (s *MemoryStorage) LoadToken() (*Token, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
 	if s.token == nil {
 		return nil, fmt.Errorf("no token stored")
 	}
@@ -48,12 +58,16 @@ func (s *MemoryStorage) LoadToken() (*Token, error) {
 
 // ClearToken clears the token from memory
 func (s *MemoryStorage) ClearToken() error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
 	s.token = nil
 	return nil
 }
 
 // HasToken checks if a token is stored in memory
 func (s *MemoryStorage) HasToken() bool {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
 	return s.token != nil
 }
 
@@ -165,12 +179,16 @@ type EncryptedFileStorage struct {
 	key []byte
 }
 
-// NewEncryptedFileStorage creates a new encrypted file-based storage
-func NewEncryptedFileStorage(filePath string, key []byte) *EncryptedFileStorage {
+// NewEncryptedFileStorage creates a new encrypted file-based storage.
+// key must be 16, 24, or 32 bytes (for AES-128, AES-192, or AES-256).
+func NewEncryptedFileStorage(filePath string, key []byte) (*EncryptedFileStorage, error) {
+	if len(key) != 16 && len(key) != 24 && len(key) != 32 {
+		return nil, fmt.Errorf("encryption key must be 16, 24, or 32 bytes (got %d)", len(key))
+	}
 	return &EncryptedFileStorage{
 		FileStorage: NewFileStorage(filePath),
 		key:         key,
-	}
+	}, nil
 }
 
 // SaveToken saves the encrypted token to a file
@@ -185,8 +203,11 @@ func (s *EncryptedFileStorage) SaveToken(token *Token) error {
 		return fmt.Errorf("failed to marshal token: %w", err)
 	}
 
-	// Encrypt data (simple XOR for demonstration - use proper encryption in production)
-	encrypted := s.encrypt(data)
+	// Encrypt data using AES-GCM
+	encrypted, err := s.encrypt(data)
+	if err != nil {
+		return fmt.Errorf("failed to encrypt token: %w", err)
+	}
 
 	// Ensure directory exists
 	dir := filepath.Dir(s.filePath)
@@ -216,7 +237,10 @@ func (s *EncryptedFileStorage) LoadToken() (*Token, error) {
 	}
 
 	// Decrypt data
-	data := s.decrypt(encrypted)
+	data, err := s.decrypt(encrypted)
+	if err != nil {
+		return nil, fmt.Errorf("failed to decrypt token file: %w", err)
+	}
 
 	// Deserialize token
 	var token Token
@@ -227,22 +251,52 @@ func (s *EncryptedFileStorage) LoadToken() (*Token, error) {
 	return &token, nil
 }
 
-// encrypt performs simple XOR encryption (replace with proper encryption)
-func (s *EncryptedFileStorage) encrypt(data []byte) []byte {
-	if len(s.key) == 0 {
-		return data
+// encrypt encrypts data using AES-GCM authenticated encryption.
+// The output format is: nonce (12 bytes) || ciphertext+tag.
+func (s *EncryptedFileStorage) encrypt(data []byte) ([]byte, error) {
+	block, err := aes.NewCipher(s.key)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create cipher: %w", err)
 	}
 
-	encrypted := make([]byte, len(data))
-	for i, b := range data {
-		encrypted[i] = b ^ s.key[i%len(s.key)]
+	gcm, err := cipher.NewGCM(block)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create GCM: %w", err)
 	}
-	return encrypted
+
+	nonce := make([]byte, gcm.NonceSize())
+	if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
+		return nil, fmt.Errorf("failed to generate nonce: %w", err)
+	}
+
+	ciphertext := gcm.Seal(nonce, nonce, data, nil)
+	return ciphertext, nil
 }
 
-// decrypt performs simple XOR decryption (replace with proper encryption)
-func (s *EncryptedFileStorage) decrypt(data []byte) []byte {
-	return s.encrypt(data) // XOR is symmetric
+// decrypt decrypts data encrypted by encrypt.
+func (s *EncryptedFileStorage) decrypt(data []byte) ([]byte, error) {
+	block, err := aes.NewCipher(s.key)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create cipher: %w", err)
+	}
+
+	gcm, err := cipher.NewGCM(block)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create GCM: %w", err)
+	}
+
+	nonceSize := gcm.NonceSize()
+	if len(data) < nonceSize {
+		return nil, fmt.Errorf("ciphertext too short")
+	}
+
+	nonce, ciphertext := data[:nonceSize], data[nonceSize:]
+	plaintext, err := gcm.Open(nil, nonce, ciphertext, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to decrypt token: %w", err)
+	}
+
+	return plaintext, nil
 }
 
 // ChainedStorage implements a chain of storage backends with fallback
@@ -343,7 +397,7 @@ func NewStorage(opts StorageOptions) (TokenStorage, error) {
 			return nil, fmt.Errorf("encryption key is required for encrypted storage")
 		}
 
-		return NewEncryptedFileStorage(path, opts.EncryptKey), nil
+		return NewEncryptedFileStorage(path, opts.EncryptKey)
 
 	default:
 		return nil, fmt.Errorf("unknown storage type: %s", opts.Type)

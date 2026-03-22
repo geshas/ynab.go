@@ -131,9 +131,10 @@ func TestFileStorage_GetFilePath(t *testing.T) {
 func TestEncryptedFileStorage(t *testing.T) {
 	tempDir := t.TempDir()
 	filePath := filepath.Join(tempDir, "encrypted_token.json")
-	key := []byte("test-encryption-key")
+	key := []byte("0123456789abcdef") // 16-byte AES-128 key
 
-	storage := NewEncryptedFileStorage(filePath, key)
+	storage, err := NewEncryptedFileStorage(filePath, key)
+	require.NoError(t, err)
 
 	testToken := &Token{
 		AccessToken:  "test-access-token",
@@ -141,7 +142,7 @@ func TestEncryptedFileStorage(t *testing.T) {
 	}
 
 	// Save encrypted token
-	err := storage.SaveToken(testToken)
+	err = storage.SaveToken(testToken)
 	assert.NoError(t, err)
 	assert.True(t, storage.HasToken())
 
@@ -244,7 +245,7 @@ func TestNewStorage(t *testing.T) {
 			name: "Encrypted storage",
 			opts: StorageOptions{
 				Type:       "encrypted",
-				EncryptKey: []byte("test-key"),
+				EncryptKey: []byte("0123456789abcdef"), // valid 16-byte AES key
 			},
 			checkType: func(storage TokenStorage) bool {
 				_, ok := storage.(*EncryptedFileStorage)
@@ -306,16 +307,25 @@ func TestFileStorage_ErrorCases(t *testing.T) {
 func TestEncryptedFileStorage_ErrorCases(t *testing.T) {
 	tempDir := t.TempDir()
 	filePath := filepath.Join(tempDir, "token.json")
+	// Use a valid 16-byte AES key
+	validKey := []byte("0123456789abcdef")
+
+	t.Run("Rejects invalid key length", func(t *testing.T) {
+		_, err := NewEncryptedFileStorage(filePath, []byte("shortkey"))
+		assert.Error(t, err)
+	})
 
 	t.Run("Save nil token", func(t *testing.T) {
-		storage := NewEncryptedFileStorage(filePath, []byte("key"))
-		err := storage.SaveToken(nil)
+		storage, err := NewEncryptedFileStorage(filePath, validKey)
+		require.NoError(t, err)
+		err = storage.SaveToken(nil)
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "token cannot be nil")
 	})
 
 	t.Run("Load non-existent file", func(t *testing.T) {
-		storage := NewEncryptedFileStorage("/non/existent/token.json", []byte("key"))
+		storage, err := NewEncryptedFileStorage("/non/existent/token.json", validKey)
+		require.NoError(t, err)
 		token, err := storage.LoadToken()
 		assert.Error(t, err)
 		assert.Nil(t, token)
@@ -323,22 +333,22 @@ func TestEncryptedFileStorage_ErrorCases(t *testing.T) {
 }
 
 func TestEncryptDecrypt(t *testing.T) {
-	key := []byte("test-encryption-key")
+	// Use a valid 16-byte AES key
+	key := []byte("0123456789abcdef")
 	storage := &EncryptedFileStorage{key: key}
 
 	original := []byte("sensitive token data")
-	encrypted := storage.encrypt(original)
-	decrypted := storage.decrypt(encrypted)
+	encrypted, err := storage.encrypt(original)
+	require.NoError(t, err)
+	decrypted, err := storage.decrypt(encrypted)
+	require.NoError(t, err)
 
 	assert.NotEqual(t, original, encrypted) // Should be different when encrypted
 	assert.Equal(t, original, decrypted)    // Should be same when decrypted
 }
 
 func TestEncryptWithEmptyKey(t *testing.T) {
-	storage := &EncryptedFileStorage{key: []byte{}}
-
-	data := []byte("test data")
-	encrypted := storage.encrypt(data)
-
-	assert.Equal(t, data, encrypted) // Should return original data with empty key
+	// NewEncryptedFileStorage now rejects empty/short keys
+	_, err := NewEncryptedFileStorage("/tmp/token.json", []byte{})
+	assert.Error(t, err)
 }

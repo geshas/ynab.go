@@ -2,6 +2,7 @@ package month
 
 import (
 	"fmt"
+	"net/url"
 
 	"github.com/geshas/ynab.go/api"
 )
@@ -26,12 +27,12 @@ func (s *Service) GetMonths(planID string, f *api.Filter) (*SearchResultSnapshot
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/months", planID)
+	reqURL := fmt.Sprintf("/plans/%s/months", url.PathEscape(planID))
 	if f != nil {
-		url = fmt.Sprintf("%s?%s", url, f.ToQuery())
+		reqURL = fmt.Sprintf("%s?%s", reqURL, f.ToQuery())
 	}
 
-	if err := s.c.GET(url, &resModel); err != nil {
+	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}
 	return &SearchResultSnapshot{
@@ -49,9 +50,9 @@ func (s *Service) GetMonth(planID string, month api.Date) (*Month, error) {
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/months/%s", planID,
-		api.DateFormat(month))
-	if err := s.c.GET(url, &resModel); err != nil {
+	reqURL := fmt.Sprintf("/plans/%s/months/%s",
+		url.PathEscape(planID), url.PathEscape(api.DateFormat(month)))
+	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}
 	return resModel.Data.Month, nil

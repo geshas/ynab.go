@@ -8,19 +8,25 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 const APIEndpoint = "https://api.ynab.com/v1"
+
+// DefaultHTTPTimeout is the default timeout for outgoing HTTP requests.
+const DefaultHTTPTimeout = 30 * time.Second
 
 // HTTPClient represents a configurable HTTP client
 type HTTPClient struct {
 	client *http.Client
 }
 
-// NewHTTPClient creates a new HTTP client with default configuration
+// NewHTTPClient creates a new HTTP client with a default 30s timeout
 func NewHTTPClient() *HTTPClient {
 	return &HTTPClient{
-		client: http.DefaultClient,
+		client: &http.Client{
+			Timeout: DefaultHTTPTimeout,
+		},
 	}
 }
 
@@ -88,17 +94,17 @@ func (h *HTTPClient) HandleResponse(resp *http.Response, responseModel any) erro
 			Error *Error `json:"error"`
 		}{}
 
-		if err := json.Unmarshal(body, &response); err != nil {
-			// Return a forged *Error for ease of use
-			apiError := &Error{
-				ID:     strconv.Itoa(resp.StatusCode),
-				Name:   "unknown_api_error",
-				Detail: "Unknown API error",
-			}
-			return apiError
+		if jsonErr := json.Unmarshal(body, &response); jsonErr == nil && response.Error != nil {
+			return response.Error
 		}
 
-		return response.Error
+		// Body was not a YNAB JSON error (plain-text gateway error, empty body, etc.)
+		// Return a synthetic error so callers always receive a non-nil error on 4xx/5xx.
+		return &Error{
+			ID:     strconv.Itoa(resp.StatusCode),
+			Name:   "unknown_api_error",
+			Detail: fmt.Sprintf("unexpected API error (HTTP %d)", resp.StatusCode),
+		}
 	}
 
 	// Parse successful response

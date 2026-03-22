@@ -4,7 +4,10 @@
 
 package api
 
-import "fmt"
+import (
+	"net/url"
+	"strconv"
+)
 
 // Filter represents the optional version filter while
 // fetching a budget
@@ -17,5 +20,7 @@ type Filter struct {
 
 // ToQuery returns the filters as a HTTP query string
 func (f *Filter) ToQuery() string {
-	return fmt.Sprintf("last_knowledge_of_server=%d", f.LastKnowledgeOfServer)
+	v := url.Values{}
+	v.Set("last_knowledge_of_server", strconv.FormatUint(f.LastKnowledgeOfServer, 10))
+	return v.Encode()
 }

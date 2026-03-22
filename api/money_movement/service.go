@@ -2,6 +2,7 @@ package money_movement
 
 import (
 	"fmt"
+	"net/url"
 
 	"github.com/geshas/ynab.go/api"
 )
@@ -40,8 +41,8 @@ func (s *Service) GetMoneyMovements(planID string) (*MoneyMovementsSnapshot, err
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/money_movements", planID)
-	if err := s.c.GET(url, &resModel); err != nil {
+	reqURL := fmt.Sprintf("/plans/%s/money_movements", url.PathEscape(planID))
+	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}
 
@@ -63,8 +64,8 @@ func (s *Service) GetMoneyMovementsByMonth(planID string, month string) (*MoneyM
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/months/%s/money_movements", planID, month)
-	if err := s.c.GET(url, &resModel); err != nil {
+	reqURL := fmt.Sprintf("/plans/%s/months/%s/money_movements", url.PathEscape(planID), url.PathEscape(month))
+	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}
 
@@ -86,8 +87,8 @@ func (s *Service) GetMoneyMovementGroups(planID string) (*MoneyMovementGroupsSna
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/money_movement_groups", planID)
-	if err := s.c.GET(url, &resModel); err != nil {
+	reqURL := fmt.Sprintf("/plans/%s/money_movement_groups", url.PathEscape(planID))
+	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}
 
@@ -109,8 +110,8 @@ func (s *Service) GetMoneyMovementGroupsByMonth(planID string, month string) (*M
 		} `json:"data"`
 	}{}
 
-	url := fmt.Sprintf("/plans/%s/months/%s/money_movement_groups", planID, month)
-	if err := s.c.GET(url, &resModel); err != nil {
+	reqURL := fmt.Sprintf("/plans/%s/months/%s/money_movement_groups", url.PathEscape(planID), url.PathEscape(month))
+	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}
 
