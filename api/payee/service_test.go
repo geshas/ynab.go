@@ -58,6 +58,46 @@ func TestService_GetPayees(t *testing.T) {
 	assert.Equal(t, expected, snapshot)
 }
 
+func TestService_CreatePayee(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	payload := payee.PayloadPayee{
+		Name: "New Supermarket",
+	}
+
+	url := "https://api.ynab.com/v1/plans/aa248caa-eed7-4575-a990-717386438d2c/payees"
+	httpmock.RegisterResponder(http.MethodPost, url,
+		func(req *http.Request) (*http.Response, error) {
+			res := httpmock.NewStringResponse(201, `{
+  "data": {
+    "payee": {
+      "id": "34e88373-ef48-4386-9ab3-7f86c2a8988f",
+      "name": "New Supermarket",
+      "transfer_account_id": null,
+      "deleted": false
+    }
+  }
+}
+		`)
+			return res, nil
+		},
+	)
+
+	client := ynab.NewClient("")
+	p, err := client.Payee().CreatePayee("aa248caa-eed7-4575-a990-717386438d2c", payload)
+	assert.NoError(t, err)
+
+	expected := &payee.Payee{
+		ID:                "34e88373-ef48-4386-9ab3-7f86c2a8988f",
+		Name:              "New Supermarket",
+		TransferAccountID: nil,
+		Deleted:           false,
+	}
+
+	assert.Equal(t, expected, p)
+}
+
 func TestService_GetPayee(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()

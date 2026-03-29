@@ -2,6 +2,7 @@ package account
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/url"
 
@@ -17,6 +18,8 @@ func NewService(c api.ClientReaderWriter) *Service {
 type Service struct {
 	c api.ClientReaderWriter
 }
+
+var errUnsupportedAccountTypeForCreate = errors.New("unsupported account type for create")
 
 // GetAccounts fetches the list of accounts from a plan
 // https://api.ynab.com/v1#/Accounts/getAccounts
@@ -61,6 +64,10 @@ func (s *Service) GetAccount(planID, accountID string) (*Account, error) {
 // CreateAccount creates a new account in a plan
 // https://api.ynab.com/v1#/Accounts/createAccount
 func (s *Service) CreateAccount(planID string, p PayloadAccount) (*Account, error) {
+	if err := validateCreateAccountType(p.Type); err != nil {
+		return nil, err
+	}
+
 	payload := struct {
 		Account *PayloadAccount `json:"account"`
 	}{
@@ -83,4 +90,13 @@ func (s *Service) CreateAccount(planID string, p PayloadAccount) (*Account, erro
 		return nil, err
 	}
 	return resModel.Data.Account, nil
+}
+
+func validateCreateAccountType(accountType Type) error {
+	switch accountType {
+	case TypeChecking, TypeSavings, TypeCash, TypeCreditCard:
+		return nil
+	default:
+		return fmt.Errorf("%w: %q", errUnsupportedAccountTypeForCreate, accountType)
+	}
 }

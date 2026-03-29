@@ -42,6 +42,34 @@ func (s *Service) GetPayees(planID string, f *api.Filter) (*SearchResultSnapshot
 	}, nil
 }
 
+// CreatePayee creates a new payee for a plan
+// https://api.ynab.com/v1#/Payees/createPayee
+func (s *Service) CreatePayee(planID string, p PayloadPayee) (*Payee, error) {
+	payload := struct {
+		Payee *PayloadPayee `json:"payee"`
+	}{
+		&p,
+	}
+
+	buf, err := json.Marshal(&payload)
+	if err != nil {
+		return nil, err
+	}
+
+	resModel := struct {
+		Data struct {
+			Payee *Payee `json:"payee"`
+		} `json:"data"`
+	}{}
+
+	reqURL := fmt.Sprintf("/plans/%s/payees", url.PathEscape(planID))
+	if err := s.c.POST(reqURL, &resModel, buf); err != nil {
+		return nil, err
+	}
+
+	return resModel.Data.Payee, nil
+}
+
 // GetPayee fetches a specific payee from a plan
 // https://api.ynab.com/v1#/Payees/getPayeeById
 func (s *Service) GetPayee(planID, payeeID string) (*Payee, error) {

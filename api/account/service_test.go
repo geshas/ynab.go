@@ -228,3 +228,24 @@ func TestService_CreateAccount(t *testing.T) {
 	}
 	assert.Equal(t, expected, a)
 }
+
+func TestService_CreateAccount_UnsupportedAccountType(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	payload := account.PayloadAccount{
+		Name:    "Loan Account",
+		Type:    account.TypeLineOfCredit,
+		Balance: 150000,
+	}
+
+	client := ynab.NewClient("")
+	a, err := client.Account().CreateAccount(
+		"bbdccdb0-9007-42aa-a6fe-02a3e94476be",
+		payload,
+	)
+
+	assert.Error(t, err)
+	assert.Nil(t, a)
+	assert.Equal(t, `unsupported account type for create: "lineOfCredit"`, err.Error())
+}

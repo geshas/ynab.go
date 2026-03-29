@@ -7,11 +7,20 @@ import (
 	"github.com/geshas/ynab.go/api"
 
 	"github.com/geshas/ynab.go"
+	"github.com/geshas/ynab.go/api/payee"
 )
 
 func ExampleService_GetPayee() {
 	c := ynab.NewClient("<valid_ynab_access_token>")
 	p, _ := c.Payee().GetPayee("<valid_plan_id>", "<valid_payee_id>")
+	fmt.Println(reflect.TypeOf(p))
+
+	// Output: *payee.Payee
+}
+
+func ExampleService_CreatePayee() {
+	c := ynab.NewClient("<valid_ynab_access_token>")
+	p, _ := c.Payee().CreatePayee("<valid_plan_id>", payee.PayloadPayee{Name: "Coffee Shop"})
 	fmt.Println(reflect.TypeOf(p))
 
 	// Output: *payee.Payee

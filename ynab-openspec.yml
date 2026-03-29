@@ -5,7 +5,7 @@ info:
     and relies upon HTTPS for transport. We respond with meaningful HTTP
     response codes and if an error occurs, we include error details in the
     response body.  API Documentation is at https://api.ynab.com
-  version: 1.79.0
+  version: 1.81.0
 servers:
   - url: https://api.ynab.com/v1
 security:
@@ -622,6 +622,43 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+    post:
+      tags:
+        - Payees
+      summary: Create a payee
+      description: Creates a new payee
+      operationId: createPayee
+      parameters:
+        - name: plan_id
+          in: path
+          description: 'The id of the plan ("last-used" can be used to specify the last
+            used plan and "default" can be used if default plan selection is
+            enabled (see: https://api.ynab.com/#oauth-default-plan)'
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: The payee to create
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostPayeeWrapper"
+        required: true
+      responses:
+        "201":
+          description: The payee was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SavePayeeResponse"
+        "400":
+          description: The request could not be understood due to malformed syntax or
+            validation error(s)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      x-codegen-request-body-name: data
   /plans/{plan_id}/payees/{payee_id}:
     get:
       tags:
@@ -2952,6 +2989,13 @@ components:
               description: The name of the category.  If a split transaction, this will be
                 'Split'.
     PatchPayeeWrapper:
+      required:
+        - payee
+      type: object
+      properties:
+        payee:
+          $ref: "#/components/schemas/SavePayee"
+    PostPayeeWrapper:
       required:
         - payee
       type: object
