@@ -20,16 +20,40 @@ type Service struct {
 // GetPlans fetches the list of plans
 // https://api.ynab.com/v1#/Plans/getPlans
 func (s *Service) GetPlans() ([]*Summary, error) {
-	return s.GetPlansWithAccounts(false)
+	result, err := s.GetPlansWithAccountsDetailed(false)
+	if err != nil {
+		return nil, err
+	}
+
+	return result.Plans, nil
 }
 
 // GetPlansWithAccounts fetches the list of plans
 // with optional account information included
 // https://api.ynab.com/v1#/Plans/getPlans
 func (s *Service) GetPlansWithAccounts(includeAccounts bool) ([]*Summary, error) {
+	result, err := s.GetPlansWithAccountsDetailed(includeAccounts)
+	if err != nil {
+		return nil, err
+	}
+
+	return result.Plans, nil
+}
+
+// GetPlansDetailed fetches the list of plans and optional default plan.
+// https://api.ynab.com/v1#/Plans/getPlans
+func (s *Service) GetPlansDetailed() (*PlansResult, error) {
+	return s.GetPlansWithAccountsDetailed(false)
+}
+
+// GetPlansWithAccountsDetailed fetches the list of plans, optional default plan,
+// and optional account information included.
+// https://api.ynab.com/v1#/Plans/getPlans
+func (s *Service) GetPlansWithAccountsDetailed(includeAccounts bool) (*PlansResult, error) {
 	resModel := struct {
 		Data struct {
-			Plans []*Summary `json:"plans"`
+			Plans       []*Summary `json:"plans"`
+			DefaultPlan *Summary   `json:"default_plan"`
 		} `json:"data"`
 	}{}
 
@@ -41,7 +65,11 @@ func (s *Service) GetPlansWithAccounts(includeAccounts bool) ([]*Summary, error)
 	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}
-	return resModel.Data.Plans, nil
+
+	return &PlansResult{
+		Plans:       resModel.Data.Plans,
+		DefaultPlan: resModel.Data.DefaultPlan,
+	}, nil
 }
 
 // GetPlan fetches a single plan with all related entities,

@@ -17,8 +17,10 @@ type Service struct {
 	c api.ClientReader
 }
 
+const currentMonthID = "current"
+
 // GetMonths fetches the list of months from a plan
-// https://api.ynab.com/v1#/Months/getBudgetMonths
+// https://api.ynab.com/v1#/Months/getPlanMonths
 func (s *Service) GetMonths(planID string, f *api.Filter) (*SearchResultSnapshot, error) {
 	resModel := struct {
 		Data struct {
@@ -42,8 +44,18 @@ func (s *Service) GetMonths(planID string, f *api.Filter) (*SearchResultSnapshot
 }
 
 // GetMonth fetches a specific month from a plan
-// https://api.ynab.com/v1#/Months/getBudgetMonth
+// https://api.ynab.com/v1#/Months/getPlanMonth
 func (s *Service) GetMonth(planID string, month api.Date) (*Month, error) {
+	return s.getMonth(planID, api.DateFormat(month))
+}
+
+// GetCurrentMonth fetches the current month from a plan.
+// https://api.ynab.com/v1#/Months/getPlanMonth
+func (s *Service) GetCurrentMonth(planID string) (*Month, error) {
+	return s.getMonth(planID, currentMonthID)
+}
+
+func (s *Service) getMonth(planID, month string) (*Month, error) {
 	resModel := struct {
 		Data struct {
 			Month *Month `json:"month"`
@@ -51,7 +63,7 @@ func (s *Service) GetMonth(planID string, month api.Date) (*Month, error) {
 	}{}
 
 	reqURL := fmt.Sprintf("/plans/%s/months/%s",
-		url.PathEscape(planID), url.PathEscape(api.DateFormat(month)))
+		url.PathEscape(planID), url.PathEscape(month))
 	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}

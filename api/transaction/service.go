@@ -51,7 +51,7 @@ func (s *Service) GetTransactions(planID string, f *Filter) (*SearchResultSnapsh
 }
 
 // GetTransaction fetches a specific transaction from a plan
-// https://api.ynab.com/v1#/Transactions/getTransactionsById
+// https://api.ynab.com/v1#/Transactions/getTransactionById
 func (s *Service) GetTransaction(planID, transactionID string) (*Transaction, error) {
 	resModel := struct {
 		Data struct {
@@ -104,7 +104,8 @@ func (s *Service) CreateTransactions(planID string,
 
 // BulkCreateTransactions creates multiple transactions for a plan
 // https://api.ynab.com/v1#/Transactions/bulkCreateTransactions
-// Deprecated: Use transaction.CreateTransactions instead.
+// Deprecated: This uses a legacy endpoint removed from the current OpenAPI spec.
+// Use transaction.CreateTransactions instead.
 func (s *Service) BulkCreateTransactions(planID string,
 	ps []PayloadTransaction) (*Bulk, error) {
 
@@ -264,10 +265,24 @@ func (s *Service) GetTransactionsByMonth(planID, month string, f *Filter) (*Sear
 // https://api.ynab.com/v1#/Transactions/getTransactionsByCategory
 func (s *Service) GetTransactionsByCategory(planID, categoryID string,
 	f *Filter) ([]*Hybrid, error) {
+	snapshot, err := s.GetTransactionsByCategoryWithSnapshot(planID, categoryID, f)
+	if err != nil {
+		return nil, err
+	}
+
+	return snapshot.Transactions, nil
+}
+
+// GetTransactionsByCategoryWithSnapshot fetches the list of transactions of a specific category
+// from a plan with filtering capabilities and server knowledge.
+// https://api.ynab.com/v1#/Transactions/getTransactionsByCategory
+func (s *Service) GetTransactionsByCategoryWithSnapshot(planID, categoryID string,
+	f *Filter) (*HybridSearchResultSnapshot, error) {
 
 	resModel := struct {
 		Data struct {
-			Transactions []*Hybrid `json:"transactions"`
+			Transactions    []*Hybrid `json:"transactions"`
+			ServerKnowledge uint64    `json:"server_knowledge"`
 		} `json:"data"`
 	}{}
 
@@ -280,7 +295,10 @@ func (s *Service) GetTransactionsByCategory(planID, categoryID string,
 		return nil, err
 	}
 
-	return resModel.Data.Transactions, nil
+	return &HybridSearchResultSnapshot{
+		Transactions:    resModel.Data.Transactions,
+		ServerKnowledge: resModel.Data.ServerKnowledge,
+	}, nil
 }
 
 // GetTransactionsByPayee fetches the list of transactions of a specific payee
@@ -288,10 +306,24 @@ func (s *Service) GetTransactionsByCategory(planID, categoryID string,
 // https://api.ynab.com/v1#/Transactions/getTransactionsByPayee
 func (s *Service) GetTransactionsByPayee(planID, payeeID string,
 	f *Filter) ([]*Hybrid, error) {
+	snapshot, err := s.GetTransactionsByPayeeWithSnapshot(planID, payeeID, f)
+	if err != nil {
+		return nil, err
+	}
+
+	return snapshot.Transactions, nil
+}
+
+// GetTransactionsByPayeeWithSnapshot fetches the list of transactions of a specific payee
+// from a plan with filtering capabilities and server knowledge.
+// https://api.ynab.com/v1#/Transactions/getTransactionsByPayee
+func (s *Service) GetTransactionsByPayeeWithSnapshot(planID, payeeID string,
+	f *Filter) (*HybridSearchResultSnapshot, error) {
 
 	resModel := struct {
 		Data struct {
-			Transactions []*Hybrid `json:"transactions"`
+			Transactions    []*Hybrid `json:"transactions"`
+			ServerKnowledge uint64    `json:"server_knowledge"`
 		} `json:"data"`
 	}{}
 
@@ -304,13 +336,22 @@ func (s *Service) GetTransactionsByPayee(planID, payeeID string,
 		return nil, err
 	}
 
-	return resModel.Data.Transactions, nil
+	return &HybridSearchResultSnapshot{
+		Transactions:    resModel.Data.Transactions,
+		ServerKnowledge: resModel.Data.ServerKnowledge,
+	}, nil
 }
 
 // ScheduledSearchResultSnapshot represents the result of a scheduled transaction search with server knowledge
 type ScheduledSearchResultSnapshot struct {
 	ScheduledTransactions []*Scheduled
 	ServerKnowledge       uint64
+}
+
+// HybridSearchResultSnapshot represents the result of a hybrid transaction search with server knowledge.
+type HybridSearchResultSnapshot struct {
+	Transactions    []*Hybrid
+	ServerKnowledge uint64
 }
 
 // GetScheduledTransactions fetches the list of scheduled transactions from

@@ -15,7 +15,7 @@ This is an UNOFFICIAL Go client for the YNAB API. It covers 100% of the resource
 
 ## Features
 
-- ✅ **Complete API Coverage** - All 36 YNAB API endpoints implemented
+- ✅ **Complete API Coverage** - All endpoints in the bundled YNAB OpenAPI spec implemented
 - 🔐 **OAuth 2.0 Support** - Authorization Code and Implicit Grant flows
 - 🔄 **Automatic Token Refresh** - Seamless token renewal
 - 🔥 **Token Hot-Swapping** - Runtime token updates without client recreation
@@ -247,6 +247,15 @@ if err != nil {
     log.Fatal(err)
 }
 
+// List budgets and access optional default budget
+plansResult, err := client.Plan().GetPlansDetailed()
+if err != nil {
+    log.Fatal(err)
+}
+if plansResult.DefaultPlan != nil {
+    fmt.Printf("Default budget: %s\n", plansResult.DefaultPlan.Name)
+}
+
 // Get detailed budget with all data
 budget, err := client.Plan().GetPlan("plan-id", nil)
 if err != nil {
@@ -281,10 +290,23 @@ createdAccount, err := client.Account().CreateAccount("plan-id", newAccount)
 transactions, err := client.Transaction().GetTransactions("plan-id", nil)
 
 // Get transactions with filtering
-filter := &api.Filter{
-    SinceDate: api.Date(time.Now().AddDate(0, -1, 0)), // Last month
+sinceDate, err := api.DateFromString("2026-01-01")
+if err != nil {
+    log.Fatal(err)
+}
+filter := &transaction.Filter{
+    Since: &sinceDate,
 }
 transactions, err := client.Transaction().GetTransactions("plan-id", filter)
+
+// Category/payee transaction searches can include server knowledge snapshots
+categoryTxResult, err := client.Transaction().GetTransactionsByCategoryWithSnapshot(
+    "plan-id", "category-id", nil,
+)
+if err != nil {
+    log.Fatal(err)
+}
+fmt.Println("Server knowledge:", categoryTxResult.ServerKnowledge)
 
 // Create new transaction
 newTransaction := transaction.PayloadTransaction{
@@ -303,6 +325,20 @@ updated, err := client.Transaction().UpdateTransaction("plan-id", "transaction-i
 
 // Delete transaction
 err = client.Transaction().DeleteTransaction("plan-id", "transaction-id")
+```
+
+### Working with Months
+
+```go
+// Get a specific month
+monthDate, err := api.DateFromString("2026-03-01")
+if err != nil {
+    log.Fatal(err)
+}
+monthDetail, err := client.Month().GetMonth("plan-id", monthDate)
+
+// Or fetch the current month directly
+currentMonth, err := client.Month().GetCurrentMonth("plan-id")
 ```
 
 ### Working with Categories

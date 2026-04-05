@@ -48,6 +48,13 @@ type Summary struct {
 	LastMonth      *api.Date       `json:"last_month"`
 }
 
+// PlansResult represents the result of fetching plans,
+// including an optional default plan.
+type PlansResult struct {
+	Plans       []*Summary
+	DefaultPlan *Summary
+}
+
 // Snapshot represents a versioned snapshot for a plan
 type Snapshot struct {
 	Plan            *Plan

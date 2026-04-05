@@ -111,3 +111,48 @@ func TestService_GetMonth(t *testing.T) {
 	assert.Equal(t, &expectedActivity, m.Activity)
 	assert.Nil(t, m.Note)
 }
+
+func TestService_GetCurrentMonth(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	url := "https://api.ynab.com/v1/plans/aa248caa-eed7-4575-a990-717386438d2c/months/current"
+	httpmock.RegisterResponder(http.MethodGet, url,
+		func(req *http.Request) (*http.Response, error) {
+			res := httpmock.NewStringResponse(200, `{
+  "data": {
+    "month": {
+			"month": "2017-10-01",
+			"note": null,
+			"to_be_budgeted": 0,
+			"age_of_money": 14,
+			"income": 3077330,
+			"budgeted": 3271990,
+			"activity": -3128590
+		}
+	}
+}
+		`)
+			return res, nil
+		},
+	)
+
+	client := ynab.NewClient("")
+	m, err := client.Month().GetCurrentMonth("aa248caa-eed7-4575-a990-717386438d2c")
+	assert.NoError(t, err)
+
+	var (
+		expectedAgeOfMoney   int64 = 14
+		expectedToBeBudgeted int64
+		expectedIncome       int64 = 3077330
+		expectedBudgeted     int64 = 3271990
+		expectedActivity     int64 = -3128590
+	)
+	assert.Equal(t, "2017-10-01 00:00:00 +0000 UTC", m.Month.String())
+	assert.Equal(t, &expectedToBeBudgeted, m.ToBeBudgeted)
+	assert.Equal(t, &expectedAgeOfMoney, m.AgeOfMoney)
+	assert.Equal(t, &expectedIncome, m.Income)
+	assert.Equal(t, &expectedBudgeted, m.Budgeted)
+	assert.Equal(t, &expectedActivity, m.Activity)
+	assert.Nil(t, m.Note)
+}

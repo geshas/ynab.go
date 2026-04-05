@@ -460,6 +460,108 @@ func TestService_GetTransactionsByPayee(t *testing.T) {
 	assert.Equal(t, expected, transactions)
 }
 
+func TestService_GetTransactionsByCategoryWithSnapshot(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	url := "https://api.ynab.com/v1/plans/aa248caa-eed7-4575-a990-717386438d2c/categories/a33c906e-444c-469c-be27-04c8e0c9959f/transactions"
+	httpmock.RegisterResponder(http.MethodGet, url,
+		func(req *http.Request) (*http.Response, error) {
+			res := httpmock.NewStringResponse(200, `{
+  "data": {
+    "transactions": [
+      {
+        "type": "transaction",
+        "id": "c132c55c-1200-4606-a321-99f4ec24b4df",
+        "parent_transaction_id": null,
+        "date": "2018-01-10",
+        "amount": -42000,
+        "memo": "",
+        "cleared": "reconciled",
+        "approved": true,
+        "flag_color": null,
+        "account_id": "134d159-444c-469c-be27-44094e388fa0",
+        "account_name": "Cash",
+        "payee_id": "b391144e-444c-469c-be27-fed6aa352a7a",
+        "payee_name": "Landlord",
+        "category_id": "a33c906e-444c-469c-be27-04c8e0c9959f",
+        "category_name": "Rent",
+        "transfer_account_id": null,
+        "import_id": null,
+        "deleted": false
+      }
+    ],
+    "server_knowledge": 777
+  }
+}`)
+			return res, nil
+		},
+	)
+
+	client := ynab.NewClient("")
+	result, err := client.Transaction().GetTransactionsByCategoryWithSnapshot(
+		"aa248caa-eed7-4575-a990-717386438d2c",
+		"a33c906e-444c-469c-be27-04c8e0c9959f",
+		nil,
+	)
+	assert.NoError(t, err)
+	if assert.NotNil(t, result) {
+		assert.Len(t, result.Transactions, 1)
+		assert.Equal(t, uint64(777), result.ServerKnowledge)
+	}
+}
+
+func TestService_GetTransactionsByPayeeWithSnapshot(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	url := "https://api.ynab.com/v1/plans/aa248caa-eed7-4575-a990-717386438d2c/payees/b391144e-444c-469c-be27-fed6aa352a7a/transactions"
+	httpmock.RegisterResponder(http.MethodGet, url,
+		func(req *http.Request) (*http.Response, error) {
+			res := httpmock.NewStringResponse(200, `{
+  "data": {
+    "transactions": [
+      {
+        "type": "transaction",
+        "id": "c132c55c-1200-4606-a321-99f4ec24b4df",
+        "parent_transaction_id": null,
+        "date": "2018-01-10",
+        "amount": -42000,
+        "memo": "",
+        "cleared": "reconciled",
+        "approved": true,
+        "flag_color": null,
+        "account_id": "134d159-444c-469c-be27-44094e388fa0",
+        "account_name": "Cash",
+        "payee_id": "b391144e-444c-469c-be27-fed6aa352a7a",
+        "payee_name": "Landlord",
+        "category_id": "a33c906e-444c-469c-be27-04c8e0c9959f",
+        "category_name": "Rent",
+        "transfer_account_id": null,
+        "import_id": null,
+        "deleted": false
+      }
+    ],
+    "server_knowledge": 888
+  }
+}`)
+			return res, nil
+		},
+	)
+
+	client := ynab.NewClient("")
+	result, err := client.Transaction().GetTransactionsByPayeeWithSnapshot(
+		"aa248caa-eed7-4575-a990-717386438d2c",
+		"b391144e-444c-469c-be27-fed6aa352a7a",
+		nil,
+	)
+	assert.NoError(t, err)
+	if assert.NotNil(t, result) {
+		assert.Len(t, result.Transactions, 1)
+		assert.Equal(t, uint64(888), result.ServerKnowledge)
+	}
+}
+
 func TestService_GetScheduledTransactions(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()

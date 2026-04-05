@@ -47,6 +47,7 @@ func TestService_GetPlans(t *testing.T) {
     ]
   }
 }
+
 		`)
 				return res, nil
 			},
@@ -166,6 +167,79 @@ func TestService_GetPlans(t *testing.T) {
 
 		assert.Equal(t, "aa248caa-eed7-4575-a990-717386438d2c", b.ID)
 		assert.Nil(t, b.CurrencyFormat)
+	})
+}
+
+func TestService_GetPlansDetailed(t *testing.T) {
+	t.Run(`default plan present`, func(t *testing.T) {
+		httpmock.Activate()
+		defer httpmock.DeactivateAndReset()
+
+		url := "https://api.ynab.com/v1/plans"
+		httpmock.RegisterResponder(http.MethodGet, url,
+			func(req *http.Request) (*http.Response, error) {
+				res := httpmock.NewStringResponse(200, `{
+  "data": {
+    "plans": [
+      {
+        "id": "aa248caa-eed7-4575-a990-717386438d2c",
+        "name": "Test Plan"
+      }
+    ],
+    "default_plan": {
+      "id": "bb248caa-eed7-4575-a990-717386438d2c",
+      "name": "Default Plan"
+    }
+  }
+}`)
+				return res, nil
+			},
+		)
+
+		client := ynab.NewClient("")
+		result, err := client.Plan().GetPlansDetailed()
+		assert.NoError(t, err)
+
+		if assert.NotNil(t, result) {
+			assert.Len(t, result.Plans, 1)
+			assert.Equal(t, "aa248caa-eed7-4575-a990-717386438d2c", result.Plans[0].ID)
+			if assert.NotNil(t, result.DefaultPlan) {
+				assert.Equal(t, "bb248caa-eed7-4575-a990-717386438d2c", result.DefaultPlan.ID)
+				assert.Equal(t, "Default Plan", result.DefaultPlan.Name)
+			}
+		}
+	})
+
+	t.Run(`default plan null`, func(t *testing.T) {
+		httpmock.Activate()
+		defer httpmock.DeactivateAndReset()
+
+		url := "https://api.ynab.com/v1/plans"
+		httpmock.RegisterResponder(http.MethodGet, url,
+			func(req *http.Request) (*http.Response, error) {
+				res := httpmock.NewStringResponse(200, `{
+  "data": {
+    "plans": [
+      {
+        "id": "aa248caa-eed7-4575-a990-717386438d2c",
+        "name": "Test Plan"
+      }
+    ],
+    "default_plan": null
+  }
+}`)
+				return res, nil
+			},
+		)
+
+		client := ynab.NewClient("")
+		result, err := client.Plan().GetPlansDetailed()
+		assert.NoError(t, err)
+
+		if assert.NotNil(t, result) {
+			assert.Len(t, result.Plans, 1)
+			assert.Nil(t, result.DefaultPlan)
+		}
 	})
 }
 
