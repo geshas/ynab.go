@@ -94,7 +94,7 @@ func (s *Service) CreateAccount(planID string, p PayloadAccount) (*Account, erro
 
 func validateCreateAccountType(accountType Type) error {
 	switch accountType {
-	case TypeChecking, TypeSavings, TypeCash, TypeCreditCard:
+	case TypeChecking, TypeSavings, TypeCash, TypeCreditCard, TypeOtherAsset, TypeOtherLiability:
 		return nil
 	default:
 		return fmt.Errorf("%w: %q", errUnsupportedAccountTypeForCreate, accountType)

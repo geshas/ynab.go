@@ -21,10 +21,22 @@ type Account struct {
 	OnBudget bool   `json:"on_budget"`
 	// Balance The current balance of the account in milliunits format
 	Balance int64 `json:"balance"`
+	// BalanceFormatted The current balance formatted in the plan's currency format
+	BalanceFormatted *string `json:"balance_formatted"`
+	// BalanceCurrency The current balance as a decimal currency amount
+	BalanceCurrency *float64 `json:"balance_currency"`
 	// ClearedBalance The current cleared balance of the account in milliunits format
 	ClearedBalance int64 `json:"cleared_balance"`
+	// ClearedBalanceFormatted The current cleared balance formatted in the plan's currency format
+	ClearedBalanceFormatted *string `json:"cleared_balance_formatted"`
+	// ClearedBalanceCurrency The current cleared balance as a decimal currency amount
+	ClearedBalanceCurrency *float64 `json:"cleared_balance_currency"`
 	// UnclearedBalance The current uncleared balance of the account in milliunits format
 	UnclearedBalance int64 `json:"uncleared_balance"`
+	// UnclearedBalanceFormatted The current uncleared balance formatted in the plan's currency format
+	UnclearedBalanceFormatted *string `json:"uncleared_balance_formatted"`
+	// UnclearedBalanceCurrency The current uncleared balance as a decimal currency amount
+	UnclearedBalanceCurrency *float64 `json:"uncleared_balance_currency"`
 	// TransferPayeeID The payee id which should be used when transferring to this account
 	TransferPayeeID *string `json:"transfer_payee_id"`
 	Closed          bool    `json:"closed"`

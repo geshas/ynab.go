@@ -139,8 +139,14 @@ func TestService_GetAccount(t *testing.T) {
       "closed": true,
 			"note": "omg omg omg",
       "balance": 0,
+      "balance_formatted": "$0.00",
+      "balance_currency": 0,
       "cleared_balance": 0,
+      "cleared_balance_formatted": "$0.00",
+      "cleared_balance_currency": 0,
       "uncleared_balance": 0,
+      "uncleared_balance_formatted": "$0.00",
+      "uncleared_balance_currency": 0,
       "deleted": false
     }
   }
@@ -158,17 +164,25 @@ func TestService_GetAccount(t *testing.T) {
 	assert.NoError(t, err)
 
 	note := "omg omg omg"
+	balanceFormatted := "$0.00"
+	zeroCurrency := 0.0
 	expected := &account.Account{
-		ID:               "aa248caa-eed7-4575-a990-717386438d2c",
-		Name:             "Test Account",
-		Type:             account.TypeChecking,
-		OnBudget:         true,
-		Note:             &note,
-		Closed:           true,
-		Balance:          int64(0),
-		ClearedBalance:   int64(0),
-		UnclearedBalance: int64(0),
-		Deleted:          false,
+		ID:                        "aa248caa-eed7-4575-a990-717386438d2c",
+		Name:                      "Test Account",
+		Type:                      account.TypeChecking,
+		OnBudget:                  true,
+		Note:                      &note,
+		Closed:                    true,
+		Balance:                   int64(0),
+		BalanceFormatted:          &balanceFormatted,
+		BalanceCurrency:           &zeroCurrency,
+		ClearedBalance:            int64(0),
+		ClearedBalanceFormatted:   &balanceFormatted,
+		ClearedBalanceCurrency:    &zeroCurrency,
+		UnclearedBalance:          int64(0),
+		UnclearedBalanceFormatted: &balanceFormatted,
+		UnclearedBalanceCurrency:  &zeroCurrency,
+		Deleted:                   false,
 	}
 	assert.Equal(t, expected, a)
 }
@@ -248,4 +262,39 @@ func TestService_CreateAccount_UnsupportedAccountType(t *testing.T) {
 	assert.Error(t, err)
 	assert.Nil(t, a)
 	assert.Equal(t, `unsupported account type for create: "lineOfCredit"`, err.Error())
+}
+
+func TestService_CreateAccount_AllowedAdditionalAccountTypes(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	url := "https://api.ynab.com/v1/plans/bbdccdb0-9007-42aa-a6fe-02a3e94476be/accounts"
+	httpmock.RegisterResponder(http.MethodPost, url,
+		func(req *http.Request) (*http.Response, error) {
+			res := httpmock.NewStringResponse(201, `{
+  "data": {
+    "account": {
+      "id": "new-account-id-123",
+      "name": "New Account",
+      "type": "otherAsset",
+      "on_budget": true,
+      "closed": false,
+      "balance": 1000,
+      "cleared_balance": 1000,
+      "uncleared_balance": 0,
+      "deleted": false
+    }
+  }
+}`)
+			return res, nil
+		},
+	)
+
+	for _, accountType := range []account.Type{account.TypeOtherAsset, account.TypeOtherLiability} {
+		_, err := ynab.NewClient("").Account().CreateAccount(
+			"bbdccdb0-9007-42aa-a6fe-02a3e94476be",
+			account.PayloadAccount{Name: "New Account", Type: accountType, Balance: 1000},
+		)
+		assert.NoError(t, err)
+	}
 }

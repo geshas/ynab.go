@@ -17,6 +17,8 @@ type MoneyMovement struct {
 	FromCategoryID       string     `json:"from_category_id"`
 	ToCategoryID         string     `json:"to_category_id"`
 	Amount               int64      `json:"amount"`
+	AmountFormatted      *string    `json:"amount_formatted"`
+	AmountCurrency       *float64   `json:"amount_currency"`
 }
 
 // MoneyMovementGroup represents a group of money movements

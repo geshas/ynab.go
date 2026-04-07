@@ -8,10 +8,14 @@ type Transaction struct {
 	ID   string   `json:"id"`
 	Date api.Date `json:"date"`
 	// Amount Transaction amount in milliunits format
-	Amount    int64          `json:"amount"`
-	Cleared   ClearingStatus `json:"cleared"`
-	Approved  bool           `json:"approved"`
-	AccountID string         `json:"account_id"`
+	Amount int64 `json:"amount"`
+	// AmountFormatted Transaction amount formatted in the plan's currency format
+	AmountFormatted *string `json:"amount_formatted"`
+	// AmountCurrency Transaction amount as a decimal currency amount
+	AmountCurrency *float64       `json:"amount_currency"`
+	Cleared        ClearingStatus `json:"cleared"`
+	Approved       bool           `json:"approved"`
+	AccountID      string         `json:"account_id"`
 	// Deleted Deleted transactions will only be included in delta requests
 	Deleted         bool              `json:"deleted"`
 	AccountName     string            `json:"account_name"`
@@ -46,10 +50,14 @@ type Summary struct {
 	ID   string   `json:"id"`
 	Date api.Date `json:"date"`
 	// Amount Transaction amount in milliunits format
-	Amount    int64          `json:"amount"`
-	Cleared   ClearingStatus `json:"cleared"`
-	Approved  bool           `json:"approved"`
-	AccountID string         `json:"account_id"`
+	Amount int64 `json:"amount"`
+	// AmountFormatted Transaction amount formatted in the plan's currency format
+	AmountFormatted *string `json:"amount_formatted"`
+	// AmountCurrency Transaction amount as a decimal currency amount
+	AmountCurrency *float64       `json:"amount_currency"`
+	Cleared        ClearingStatus `json:"cleared"`
+	Approved       bool           `json:"approved"`
+	AccountID      string         `json:"account_id"`
 	// Deleted Deleted transactions will only be included in delta requests
 	Deleted bool `json:"deleted"`
 
@@ -82,6 +90,10 @@ type SubTransaction struct {
 	TransactionID string `json:"transaction_id"`
 	// Amount sub-transaction amount in milliunits format
 	Amount int64 `json:"amount"`
+	// AmountFormatted Sub-transaction amount formatted in the plan's currency format
+	AmountFormatted *string `json:"amount_formatted"`
+	// AmountCurrency Sub-transaction amount as a decimal currency amount
+	AmountCurrency *float64 `json:"amount_currency"`
 	// Deleted Deleted sub-transactions will only be included in delta requests.
 	Deleted bool `json:"deleted"`
 
@@ -101,11 +113,15 @@ type Hybrid struct {
 	ID   string   `json:"id"`
 	Date api.Date `json:"date"`
 	// Amount Transaction amount in milliunits format
-	Amount      int64          `json:"amount"`
-	Cleared     ClearingStatus `json:"cleared"`
-	Approved    bool           `json:"approved"`
-	AccountID   string         `json:"account_id"`
-	AccountName string         `json:"account_name"`
+	Amount int64 `json:"amount"`
+	// AmountFormatted Transaction amount formatted in the plan's currency format
+	AmountFormatted *string `json:"amount_formatted"`
+	// AmountCurrency Transaction amount as a decimal currency amount
+	AmountCurrency *float64       `json:"amount_currency"`
+	Cleared        ClearingStatus `json:"cleared"`
+	Approved       bool           `json:"approved"`
+	AccountID      string         `json:"account_id"`
+	AccountName    string         `json:"account_name"`
 	// Deleted Deleted transactions will only be included in delta requests
 	Deleted bool `json:"deleted"`
 	Type    Type `json:"type"`
@@ -144,8 +160,12 @@ type Scheduled struct {
 	DateNext  api.Date           `json:"date_next"`
 	Frequency ScheduledFrequency `json:"frequency"`
 	// Amount The scheduled transaction amount in milliunits format
-	Amount    int64  `json:"amount"`
-	AccountID string `json:"account_id"`
+	Amount int64 `json:"amount"`
+	// AmountFormatted Scheduled transaction amount formatted in the plan's currency format
+	AmountFormatted *string `json:"amount_formatted"`
+	// AmountCurrency Scheduled transaction amount as a decimal currency amount
+	AmountCurrency *float64 `json:"amount_currency"`
+	AccountID      string   `json:"account_id"`
 	// Deleted Deleted scheduled transactions will only be included in delta requests.
 	Deleted         bool                       `json:"deleted"`
 	AccountName     string                     `json:"account_name"`
@@ -175,8 +195,12 @@ type ScheduledSummary struct {
 	DateNext  api.Date           `json:"date_next"`
 	Frequency ScheduledFrequency `json:"frequency"`
 	// Amount The scheduled transaction amount in milliunits format
-	Amount    int64  `json:"amount"`
-	AccountID string `json:"account_id"`
+	Amount int64 `json:"amount"`
+	// AmountFormatted Scheduled transaction amount formatted in the plan's currency format
+	AmountFormatted *string `json:"amount_formatted"`
+	// AmountCurrency Scheduled transaction amount as a decimal currency amount
+	AmountCurrency *float64 `json:"amount_currency"`
+	AccountID      string   `json:"account_id"`
 	// Deleted Deleted scheduled transactions will only be included in delta requests.
 	Deleted bool `json:"deleted"`
 
@@ -202,6 +226,10 @@ type ScheduledSubTransaction struct {
 	ScheduledTransactionID string `json:"scheduled_transaction_id"`
 	// Amount The scheduled sub-transaction amount in milliunits format
 	Amount int64 `json:"amount"`
+	// AmountFormatted Scheduled sub-transaction amount formatted in the plan's currency format
+	AmountFormatted *string `json:"amount_formatted"`
+	// AmountCurrency Scheduled sub-transaction amount as a decimal currency amount
+	AmountCurrency *float64 `json:"amount_currency"`
 	// Deleted Deleted scheduled sub-transactions will only be included in delta requests
 	Deleted bool `json:"deleted"`
 
