@@ -1,0 +1,23 @@
+AI_CONTRIBUTION_TEST.md
+  57e457c7cb9cea8c 8-9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "64be840ace3bbed6c829eaa71cace1c7b6fd2fda",
+  "prompts": {
+    "57e457c7cb9cea8c": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1775553136883353666",
+        "model": "unknown"
+      },
+      "human_author": "Evgeny Shtein",
+      "messages": [],
+      "total_additions": 2,
+      "total_deletions": 0,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    }
+  }
+}
