@@ -1,0 +1,26 @@
+api/money_movement/service.go
+  98c842ac5715e5d7 36,45-48,63,72-75,90,99-102,117,126-129
+api/money_movement/service_test.go
+  98c842ac5715e5d7 44,72,76-100,133,138-161,204,229,233-257,290,295-318
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "206e2f12caae5f35435930053118082eb9d19a57",
+  "prompts": {
+    "98c842ac5715e5d7": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_28bbf057effehXIq7nVAYH755h",
+        "model": "openai/gpt-5.3-codex"
+      },
+      "human_author": "Evgeny Shtein",
+      "messages": [],
+      "total_additions": 126,
+      "total_deletions": 10,
+      "accepted_lines": 126,
+      "overriden_lines": 0,
+      "messages_url": "https://usegitai.com/cas/e99813946220dc12242a4603baeb5afbdbdb973bf6e7752f4a32d5136aafabf6"
+    }
+  }
+}
