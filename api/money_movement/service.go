@@ -33,7 +33,7 @@ type MoneyMovementGroupsSnapshot struct {
 
 // GetMoneyMovements fetches all money movements for a plan
 // https://api.ynab.com/v1#/Money%20Movements/getMoneyMovements
-func (s *Service) GetMoneyMovements(planID string) (*MoneyMovementsSnapshot, error) {
+func (s *Service) GetMoneyMovements(planID string, f *api.Filter) (*MoneyMovementsSnapshot, error) {
 	resModel := struct {
 		Data struct {
 			MoneyMovements  []*MoneyMovement `json:"money_movements"`
@@ -42,6 +42,10 @@ func (s *Service) GetMoneyMovements(planID string) (*MoneyMovementsSnapshot, err
 	}{}
 
 	reqURL := fmt.Sprintf("/plans/%s/money_movements", url.PathEscape(planID))
+	if f != nil {
+		reqURL = fmt.Sprintf("%s?%s", reqURL, f.ToQuery())
+	}
+
 	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}
@@ -56,7 +60,7 @@ func (s *Service) GetMoneyMovements(planID string) (*MoneyMovementsSnapshot, err
 
 // GetMoneyMovementsByMonth fetches money movements for a specific plan month
 // https://api.ynab.com/v1#/Money%20Movements/getMoneyMovementsByMonth
-func (s *Service) GetMoneyMovementsByMonth(planID string, month string) (*MoneyMovementsSnapshot, error) {
+func (s *Service) GetMoneyMovementsByMonth(planID string, month string, f *api.Filter) (*MoneyMovementsSnapshot, error) {
 	resModel := struct {
 		Data struct {
 			MoneyMovements  []*MoneyMovement `json:"money_movements"`
@@ -65,6 +69,10 @@ func (s *Service) GetMoneyMovementsByMonth(planID string, month string) (*MoneyM
 	}{}
 
 	reqURL := fmt.Sprintf("/plans/%s/months/%s/money_movements", url.PathEscape(planID), url.PathEscape(month))
+	if f != nil {
+		reqURL = fmt.Sprintf("%s?%s", reqURL, f.ToQuery())
+	}
+
 	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}
@@ -79,7 +87,7 @@ func (s *Service) GetMoneyMovementsByMonth(planID string, month string) (*MoneyM
 
 // GetMoneyMovementGroups fetches all money movement groups for a plan
 // https://api.ynab.com/v1#/Money%20Movements/getMoneyMovementGroups
-func (s *Service) GetMoneyMovementGroups(planID string) (*MoneyMovementGroupsSnapshot, error) {
+func (s *Service) GetMoneyMovementGroups(planID string, f *api.Filter) (*MoneyMovementGroupsSnapshot, error) {
 	resModel := struct {
 		Data struct {
 			MoneyMovementGroups []*MoneyMovementGroup `json:"money_movement_groups"`
@@ -88,6 +96,10 @@ func (s *Service) GetMoneyMovementGroups(planID string) (*MoneyMovementGroupsSna
 	}{}
 
 	reqURL := fmt.Sprintf("/plans/%s/money_movement_groups", url.PathEscape(planID))
+	if f != nil {
+		reqURL = fmt.Sprintf("%s?%s", reqURL, f.ToQuery())
+	}
+
 	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}
@@ -102,7 +114,7 @@ func (s *Service) GetMoneyMovementGroups(planID string) (*MoneyMovementGroupsSna
 
 // GetMoneyMovementGroupsByMonth fetches money movement groups for a specific plan month
 // https://api.ynab.com/v1#/Money%20Movements/getMoneyMovementGroupsByMonth
-func (s *Service) GetMoneyMovementGroupsByMonth(planID string, month string) (*MoneyMovementGroupsSnapshot, error) {
+func (s *Service) GetMoneyMovementGroupsByMonth(planID string, month string, f *api.Filter) (*MoneyMovementGroupsSnapshot, error) {
 	resModel := struct {
 		Data struct {
 			MoneyMovementGroups []*MoneyMovementGroup `json:"money_movement_groups"`
@@ -111,6 +123,10 @@ func (s *Service) GetMoneyMovementGroupsByMonth(planID string, month string) (*M
 	}{}
 
 	reqURL := fmt.Sprintf("/plans/%s/months/%s/money_movement_groups", url.PathEscape(planID), url.PathEscape(month))
+	if f != nil {
+		reqURL = fmt.Sprintf("%s?%s", reqURL, f.ToQuery())
+	}
+
 	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}

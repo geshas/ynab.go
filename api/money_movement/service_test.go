@@ -41,7 +41,7 @@ func TestService_GetMoneyMovements(t *testing.T) {
 		)
 
 		client := ynab.NewClient("")
-		snapshot, err := client.MoneyMovement().GetMoneyMovements("plan-id-123")
+		snapshot, err := client.MoneyMovement().GetMoneyMovements("plan-id-123", nil)
 		assert.NoError(t, err)
 		assert.NotNil(t, snapshot)
 		assert.Len(t, snapshot.MoneyMovements, 1)
@@ -69,9 +69,34 @@ func TestService_GetMoneyMovements(t *testing.T) {
 		)
 
 		client := ynab.NewClient("")
-		movements, err := client.MoneyMovement().GetMoneyMovements("plan-id-123")
+		movements, err := client.MoneyMovement().GetMoneyMovements("plan-id-123", nil)
 		assert.NoError(t, err)
 		assert.Len(t, movements.MoneyMovements, 0)
+	})
+
+	t.Run(`success with filter`, func(t *testing.T) {
+		httpmock.Activate()
+		defer httpmock.DeactivateAndReset()
+
+		url := "https://api.ynab.com/v1/plans/plan-id-123/money_movements?last_knowledge_of_server=42"
+		httpmock.RegisterResponder(http.MethodGet, url,
+			func(req *http.Request) (*http.Response, error) {
+				res := httpmock.NewStringResponse(200, `{
+  "data": {
+    "money_movements": [],
+    "server_knowledge": 42
+  }
+}`)
+				return res, nil
+			},
+		)
+
+		client := ynab.NewClient("")
+		filter := &api.Filter{LastKnowledgeOfServer: 42}
+		snapshot, err := client.MoneyMovement().GetMoneyMovements("plan-id-123", filter)
+		assert.NoError(t, err)
+		assert.NotNil(t, snapshot)
+		assert.Equal(t, int64(42), snapshot.ServerKnowledge)
 	})
 }
 
@@ -105,10 +130,35 @@ func TestService_GetMoneyMovementsByMonth(t *testing.T) {
 		)
 
 		client := ynab.NewClient("")
-		snapshot, err := client.MoneyMovement().GetMoneyMovementsByMonth("plan-id-123", "2024-01")
+		snapshot, err := client.MoneyMovement().GetMoneyMovementsByMonth("plan-id-123", "2024-01", nil)
 		assert.NoError(t, err)
 		assert.Len(t, snapshot.MoneyMovements, 1)
 		assert.Equal(t, "mm-123", snapshot.MoneyMovements[0].ID)
+	})
+
+	t.Run(`success with filter`, func(t *testing.T) {
+		httpmock.Activate()
+		defer httpmock.DeactivateAndReset()
+
+		url := "https://api.ynab.com/v1/plans/plan-id-123/months/2024-01/money_movements?last_knowledge_of_server=99"
+		httpmock.RegisterResponder(http.MethodGet, url,
+			func(req *http.Request) (*http.Response, error) {
+				res := httpmock.NewStringResponse(200, `{
+  "data": {
+    "money_movements": [],
+    "server_knowledge": 99
+  }
+}`)
+				return res, nil
+			},
+		)
+
+		client := ynab.NewClient("")
+		filter := &api.Filter{LastKnowledgeOfServer: 99}
+		snapshot, err := client.MoneyMovement().GetMoneyMovementsByMonth("plan-id-123", "2024-01", filter)
+		assert.NoError(t, err)
+		assert.NotNil(t, snapshot)
+		assert.Equal(t, int64(99), snapshot.ServerKnowledge)
 	})
 }
 
@@ -151,7 +201,7 @@ func TestService_GetMoneyMovementGroups(t *testing.T) {
 		)
 
 		client := ynab.NewClient("")
-		snapshot, err := client.MoneyMovement().GetMoneyMovementGroups("plan-id-123")
+		snapshot, err := client.MoneyMovement().GetMoneyMovementGroups("plan-id-123", nil)
 		assert.NoError(t, err)
 		assert.Len(t, snapshot.MoneyMovementGroups, 1)
 
@@ -176,9 +226,34 @@ func TestService_GetMoneyMovementGroups(t *testing.T) {
 		)
 
 		client := ynab.NewClient("")
-		snapshot, err := client.MoneyMovement().GetMoneyMovementGroups("plan-id-123")
+		snapshot, err := client.MoneyMovement().GetMoneyMovementGroups("plan-id-123", nil)
 		assert.NoError(t, err)
 		assert.Len(t, snapshot.MoneyMovementGroups, 0)
+	})
+
+	t.Run(`success with filter`, func(t *testing.T) {
+		httpmock.Activate()
+		defer httpmock.DeactivateAndReset()
+
+		url := "https://api.ynab.com/v1/plans/plan-id-123/money_movement_groups?last_knowledge_of_server=7"
+		httpmock.RegisterResponder(http.MethodGet, url,
+			func(req *http.Request) (*http.Response, error) {
+				res := httpmock.NewStringResponse(200, `{
+  "data": {
+    "money_movement_groups": [],
+    "server_knowledge": 7
+  }
+}`)
+				return res, nil
+			},
+		)
+
+		client := ynab.NewClient("")
+		filter := &api.Filter{LastKnowledgeOfServer: 7}
+		snapshot, err := client.MoneyMovement().GetMoneyMovementGroups("plan-id-123", filter)
+		assert.NoError(t, err)
+		assert.NotNil(t, snapshot)
+		assert.Equal(t, int64(7), snapshot.ServerKnowledge)
 	})
 }
 
@@ -212,9 +287,34 @@ func TestService_GetMoneyMovementGroupsByMonth(t *testing.T) {
 		)
 
 		client := ynab.NewClient("")
-		snapshot, err := client.MoneyMovement().GetMoneyMovementGroupsByMonth("plan-id-123", "2024-01")
+		snapshot, err := client.MoneyMovement().GetMoneyMovementGroupsByMonth("plan-id-123", "2024-01", nil)
 		assert.NoError(t, err)
 		assert.Len(t, snapshot.MoneyMovementGroups, 1)
 		assert.Equal(t, "group-123", snapshot.MoneyMovementGroups[0].ID)
+	})
+
+	t.Run(`success with filter`, func(t *testing.T) {
+		httpmock.Activate()
+		defer httpmock.DeactivateAndReset()
+
+		url := "https://api.ynab.com/v1/plans/plan-id-123/months/2024-01/money_movement_groups?last_knowledge_of_server=8"
+		httpmock.RegisterResponder(http.MethodGet, url,
+			func(req *http.Request) (*http.Response, error) {
+				res := httpmock.NewStringResponse(200, `{
+  "data": {
+    "money_movement_groups": [],
+    "server_knowledge": 8
+  }
+}`)
+				return res, nil
+			},
+		)
+
+		client := ynab.NewClient("")
+		filter := &api.Filter{LastKnowledgeOfServer: 8}
+		snapshot, err := client.MoneyMovement().GetMoneyMovementGroupsByMonth("plan-id-123", "2024-01", filter)
+		assert.NoError(t, err)
+		assert.NotNil(t, snapshot)
+		assert.Equal(t, int64(8), snapshot.ServerKnowledge)
 	})
 }
