@@ -5,7 +5,7 @@ info:
     and relies upon HTTPS for transport. We respond with meaningful HTTP
     response codes and if an error occurs, we include error details in the
     response body.  API Documentation is at https://api.ynab.com
-  version: 1.82.0
+  version: 1.82.1
 servers:
   - url: https://api.ynab.com/v1
 security:
@@ -925,6 +925,13 @@ paths:
           required: true
           schema:
             type: string
+        - name: last_knowledge_of_server
+          in: query
+          description: The starting server knowledge.  If provided, only entities that
+            have changed since `last_knowledge_of_server` will be included.
+          schema:
+            type: integer
+            format: int64
       responses:
         "200":
           description: The list of requested money movements
@@ -962,6 +969,13 @@ paths:
           schema:
             type: string
             format: date
+        - name: last_knowledge_of_server
+          in: query
+          description: The starting server knowledge.  If provided, only entities that
+            have changed since `last_knowledge_of_server` will be included.
+          schema:
+            type: integer
+            format: int64
       responses:
         "200":
           description: The list of requested money movements
@@ -991,6 +1005,13 @@ paths:
           required: true
           schema:
             type: string
+        - name: last_knowledge_of_server
+          in: query
+          description: The starting server knowledge.  If provided, only entities that
+            have changed since `last_knowledge_of_server` will be included.
+          schema:
+            type: integer
+            format: int64
       responses:
         "200":
           description: The list of requested money movement groups
@@ -1028,6 +1049,13 @@ paths:
           schema:
             type: string
             format: date
+        - name: last_knowledge_of_server
+          in: query
+          description: The starting server knowledge.  If provided, only entities that
+            have changed since `last_knowledge_of_server` will be included.
+          schema:
+            type: integer
+            format: int64
       responses:
         "200":
           description: The list of requested money movement groups
