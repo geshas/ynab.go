@@ -1,0 +1,24 @@
+ynab-openspec.yml
+  98c842ac5715e5d7 8,928-934,972-978,1008-1014,1052-1058
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "aeb6a917f3431f8d845277e8f7cec40a0f1f650f",
+  "prompts": {
+    "98c842ac5715e5d7": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_28bbf057effehXIq7nVAYH755h",
+        "model": "openai/gpt-5.3-codex"
+      },
+      "human_author": "Evgeny Shtein",
+      "messages": [],
+      "total_additions": 29,
+      "total_deletions": 1,
+      "accepted_lines": 29,
+      "overriden_lines": 0,
+      "messages_url": "https://usegitai.com/cas/ec6fa8de89998eca5d50d1506c2163122bf470610e48670c4ccc1ea5e14ddc81"
+    }
+  }
+}
