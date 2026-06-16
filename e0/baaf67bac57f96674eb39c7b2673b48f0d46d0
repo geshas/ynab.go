@@ -1,0 +1,41 @@
+ynab-openspec.yml
+  s_836208ab6ad547::t_7128a0225375cb 8,1076,1092-1099,1392,1415-1422,1459,1482-1489,1526,1549-1556,1593,1620-1626,2311,2324-2326,2339,2357-2359,3281-3282,3289-3291,3299-3306
+api/category/payload.go
+  s_836208ab6ad547::t_f57806330fecc8 3-4,12-17,22-27
+api/category/updatecategory_test.go
+  s_836208ab6ad547::t_26714755ac8ff5 21-23,26-29,49,59-60
+  s_836208ab6ad547::t_de95b5459c765b 93,102
+api/transaction/service.go
+  s_836208ab6ad547::t_51e71680af68ba 402,413-414
+api/plan/service_test.go
+  s_836208ab6ad547::t_ba2ef1b31dc777 690-726
+api/plan/example_test.go
+  s_836208ab6ad547::t_26f573983b161e 54-58
+api/category/entity.go
+  s_836208ab6ad547::t_1abc1327e255e8 13
+  s_836208ab6ad547::t_de95b5459c765b 93-96,103-106
+api/transaction/service_test.go
+  s_836208ab6ad547::t_69fe19b4340621 1321-1322,1333-1336,1349-1352,1358,1381,1398-1399,1406
+api/category/create_category_test.go
+  s_836208ab6ad547::t_de95b5459c765b 75-85
+  s_836208ab6ad547::t_e384af83b2ed8a 86
+  s_836208ab6ad547::t_786a3196ffb73f 12,22-25,27-32,53,59-61,87,147,161-165
+api/plan/service.go
+  s_836208ab6ad547::t_7a7b4198170892 108,111-116,124-126
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "e0baaf67bac57f96674eb39c7b2673b48f0d46d0",
+  "prompts": {},
+  "sessions": {
+    "s_836208ab6ad547": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_130c658a0ffevwZeuNvkKRnDIu",
+        "model": "gpt-5.4"
+      },
+      "human_author": "Evgeny Shtein <evgeny.shtein@gmail.com>"
+    }
+  }
+}
