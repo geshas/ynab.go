@@ -9,6 +9,7 @@ import (
 	"gopkg.in/jarcoal/httpmock.v1"
 
 	"github.com/geshas/ynab.go"
+	"github.com/geshas/ynab.go/api"
 	"github.com/geshas/ynab.go/api/category"
 )
 
@@ -18,10 +19,17 @@ func TestService_CreateCategory(t *testing.T) {
 		defer httpmock.DeactivateAndReset()
 
 		note := "Test category note"
+		goalTarget := int64(10000)
+		goalTargetDate, err := api.DateFromString("2026-01-01")
+		assert.NoError(t, err)
+		goalNeedsWholeAmount := true
 		payload := category.PayloadCreateCategory{
-			Name:            "New Category",
-			CategoryGroupID: "group-123",
-			Note:            &note,
+			Name:                 "New Category",
+			CategoryGroupID:      "group-123",
+			Note:                 &note,
+			GoalTarget:           &goalTarget,
+			GoalTargetDate:       &goalTargetDate,
+			GoalNeedsWholeAmount: &goalNeedsWholeAmount,
 		}
 
 		url := "https://api.ynab.com/v1/plans/plan-id-123/categories"
@@ -42,11 +50,15 @@ func TestService_CreateCategory(t *testing.T) {
       "category_group_name": "Test Group",
       "name": "New Category",
       "hidden": false,
+	      "internal": false,
       "original_category_group_id": null,
       "note": "Test category note",
       "budgeted": 0,
       "activity": 0,
       "balance": 0,
+	      "goal_target": 10000,
+	      "goal_target_date": "2026-01-01",
+	      "goal_needs_whole_amount": true,
       "deleted": false
     }
   }
@@ -60,16 +72,19 @@ func TestService_CreateCategory(t *testing.T) {
 		assert.NoError(t, err)
 
 		expected := &category.Category{
-			ID:                "new-cat-456",
-			CategoryGroupID:   "group-123",
-			CategoryGroupName: "Test Group",
-			Name:              "New Category",
-			Hidden:            false,
-			Budgeted:          0,
-			Activity:          0,
-			Balance:           0,
-			Deleted:           false,
-			Note:              &note,
+			ID:                   "new-cat-456",
+			CategoryGroupID:      "group-123",
+			CategoryGroupName:    "Test Group",
+			Name:                 "New Category",
+			Hidden:               false,
+			Internal:             false,
+			Budgeted:             0,
+			Activity:             0,
+			Balance:              0,
+			Deleted:              false,
+			Note:                 &note,
+			GoalTarget:           &goalTarget,
+			GoalNeedsWholeAmount: &goalNeedsWholeAmount,
 		}
 		assert.Equal(t, expected, c)
 	})
@@ -129,6 +144,7 @@ func TestService_CreateCategoryGroup(t *testing.T) {
       "id": "new-group-456",
       "name": "New Category Group",
       "hidden": false,
+	      "internal": true,
       "deleted": false
     }
   }
@@ -142,10 +158,11 @@ func TestService_CreateCategoryGroup(t *testing.T) {
 		assert.NoError(t, err)
 
 		expected := &category.Group{
-			ID:      "new-group-456",
-			Name:    "New Category Group",
-			Hidden:  false,
-			Deleted: false,
+			ID:       "new-group-456",
+			Name:     "New Category Group",
+			Hidden:   false,
+			Internal: true,
+			Deleted:  false,
 		}
 		assert.Equal(t, expected, g)
 	})

@@ -105,9 +105,15 @@ func (s *Service) GetLastUsedPlan(f *api.Filter) (*Snapshot, error) {
 	return s.GetPlan(lastUsedPlanID, f)
 }
 
-// GetPlanSettings fetches a plan settings
+// GetPlanSettings fetches plan settings.
 // https://api.ynab.com/v1#/Plans/getPlanSettingsById
 func (s *Service) GetPlanSettings(planID string) (*Settings, error) {
+	return s.GetPlanSettingsWithFilter(planID, nil)
+}
+
+// GetPlanSettingsWithFilter fetches plan settings with optional server knowledge filtering.
+// https://api.ynab.com/v1#/Plans/getPlanSettingsById
+func (s *Service) GetPlanSettingsWithFilter(planID string, f *api.Filter) (*Settings, error) {
 	resModel := struct {
 		Data struct {
 			Settings *Settings `json:"settings"`
@@ -115,6 +121,9 @@ func (s *Service) GetPlanSettings(planID string) (*Settings, error) {
 	}{}
 
 	reqURL := fmt.Sprintf("/plans/%s/settings", url.PathEscape(planID))
+	if f != nil {
+		reqURL = fmt.Sprintf("%s?%s", reqURL, f.ToQuery())
+	}
 	if err := s.c.GET(reqURL, &resModel); err != nil {
 		return nil, err
 	}

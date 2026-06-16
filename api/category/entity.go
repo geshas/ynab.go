@@ -10,6 +10,7 @@ type Category struct {
 	CategoryGroupName string `json:"category_group_name"`
 	Name              string `json:"name"`
 	Hidden            bool   `json:"hidden"`
+	Internal          bool   `json:"internal"`
 	// Budgeted Budgeted amount in current month in milliunits format
 	Budgeted int64 `json:"budgeted"`
 	// BudgetedFormatted Budgeted amount formatted in the plan's currency format
@@ -89,18 +90,20 @@ type Category struct {
 
 // Group represents a resumed category group for a budget
 type Group struct {
-	ID     string `json:"id"`
-	Name   string `json:"name"`
-	Hidden bool   `json:"hidden"`
+	ID       string `json:"id"`
+	Name     string `json:"name"`
+	Hidden   bool   `json:"hidden"`
+	Internal bool   `json:"internal"`
 	// Deleted Deleted category groups will only be included in delta requests
 	Deleted bool `json:"deleted"`
 }
 
 // GroupWithCategories represents a category group for a budget
 type GroupWithCategories struct {
-	ID     string `json:"id"`
-	Name   string `json:"name"`
-	Hidden bool   `json:"hidden"`
+	ID       string `json:"id"`
+	Name     string `json:"name"`
+	Hidden   bool   `json:"hidden"`
+	Internal bool   `json:"internal"`
 	// Deleted Deleted category groups will only be included in delta requests
 	Deleted bool `json:"deleted"`
 

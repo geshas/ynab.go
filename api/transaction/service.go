@@ -399,6 +399,7 @@ func (s *Service) GetScheduledTransaction(planID, scheduledTransactionID string)
 // Filter represents the optional filter while fetching transactions
 type Filter struct {
 	Since                 *api.Date
+	Until                 *api.Date
 	Type                  *Status
 	LastKnowledgeOfServer *uint64
 }
@@ -408,6 +409,9 @@ func (f *Filter) ToQuery() string {
 	v := url.Values{}
 	if f.Since != nil && !f.Since.IsZero() {
 		v.Set("since_date", api.DateFormat(*f.Since))
+	}
+	if f.Until != nil && !f.Until.IsZero() {
+		v.Set("until_date", api.DateFormat(*f.Until))
 	}
 	if f.Type != nil {
 		v.Set("type", string(*f.Type))

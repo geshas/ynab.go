@@ -687,6 +687,43 @@ func TestService_GetPlanSettings(t *testing.T) {
 
 		assert.Equal(t, expected, settings)
 	})
+
+	t.Run(`success with filter`, func(t *testing.T) {
+		httpmock.Activate()
+		defer httpmock.DeactivateAndReset()
+
+		url := "https://api.ynab.com/v1/plans/aa248caa-eed7-4575-a990-717386438d2c/settings?last_knowledge_of_server=42"
+		httpmock.RegisterResponder(http.MethodGet, url,
+			func(req *http.Request) (*http.Response, error) {
+				res := httpmock.NewStringResponse(200, `{
+  "data": {
+    "settings": {
+      "date_format": {
+        "format": "DD/MM/YYYY"
+      },
+      "currency_format": {
+        "iso_code": "BRL",
+        "example_format": "123.456,78",
+        "decimal_digits": 2,
+        "decimal_separator": ",",
+        "symbol_first": true,
+        "group_separator": ".",
+        "currency_symbol": "R$",
+        "display_symbol": true
+      }
+    }
+  }
+}`)
+				return res, nil
+			},
+		)
+
+		client := ynab.NewClient("")
+		filter := &api.Filter{LastKnowledgeOfServer: 42}
+		settings, err := client.Plan().GetPlanSettingsWithFilter("aa248caa-eed7-4575-a990-717386438d2c", filter)
+		assert.NoError(t, err)
+		assert.NotNil(t, settings)
+	})
 }
 
 func TestService_GetPlansWithAccounts(t *testing.T) {

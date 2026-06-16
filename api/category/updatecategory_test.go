@@ -18,10 +18,15 @@ func TestService_UpdateCategory(t *testing.T) {
 	defer httpmock.DeactivateAndReset()
 
 	newGoalTarget := int64(25000)
+	newGoalTargetDate, err := api.DateFromString("2026-02-01")
+	assert.NoError(t, err)
+	goalNeedsWholeAmount := true
 	newName := "Updated MasterCard"
 	payload := category.PayloadCategory{
-		Name:       &newName,
-		GoalTarget: &newGoalTarget,
+		Name:                 &newName,
+		GoalTarget:           &newGoalTarget,
+		GoalTargetDate:       &newGoalTargetDate,
+		GoalNeedsWholeAmount: &goalNeedsWholeAmount,
 	}
 
 	url := "https://api.ynab.com/v1/plans/aa248caa-eed7-4575-a990-717386438d2c/categories/13419c12-78d3-4a26-82ca-1cde7aa1d6f8"
@@ -41,6 +46,7 @@ func TestService_UpdateCategory(t *testing.T) {
 		"category_group_id": "13419c12-78d3-4818-a5dc-601b2b8a6064",
 		"name": "Updated MasterCard",
 		"hidden": false,
+		"internal": true,
 		"original_category_group_id": null,
 		"note": null,
 		"budgeted": 0,
@@ -50,6 +56,8 @@ func TestService_UpdateCategory(t *testing.T) {
 		"goal_type": "TB",
 		"goal_creation_month": "2018-04-01",
 		"goal_target": 25000,
+		"goal_target_date": "2026-02-01",
+		"goal_needs_whole_amount": true,
 		"goal_target_month": "2018-05-01",
 		"goal_percentage_complete": 20
     }
@@ -82,6 +90,7 @@ func TestService_UpdateCategory(t *testing.T) {
 		CategoryGroupID:        "13419c12-78d3-4818-a5dc-601b2b8a6064",
 		Name:                   "Updated MasterCard",
 		Hidden:                 false,
+		Internal:               true,
 		Budgeted:               int64(0),
 		Activity:               int64(12190),
 		Balance:                int64(18740),
@@ -90,6 +99,7 @@ func TestService_UpdateCategory(t *testing.T) {
 		GoalCreationMonth:      &expectedGoalCreationMonth,
 		GoalTargetMonth:        &expectedGoalTargetMonth,
 		GoalTarget:             &expectedGoalTarget,
+		GoalNeedsWholeAmount:   &goalNeedsWholeAmount,
 		GoalPercentageComplete: &expectedGoalPercentageComplete,
 	}
 	assert.Equal(t, expected, c)

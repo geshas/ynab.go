@@ -50,3 +50,13 @@ func ExampleService_GetPlanSettings() {
 
 	// Output: *plan.Settings
 }
+
+func ExampleService_GetPlanSettingsWithFilter() {
+	c := ynab.NewClient("<valid_ynab_access_token>")
+
+	f := api.Filter{LastKnowledgeOfServer: 10}
+	s, _ := c.Plan().GetPlanSettingsWithFilter("<valid_plan_id>", &f)
+	fmt.Println(reflect.TypeOf(s))
+
+	// Output: *plan.Settings
+}

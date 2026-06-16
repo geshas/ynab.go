@@ -1318,6 +1318,8 @@ func TestService_DeleteTransaction(t *testing.T) {
 func TestFilter_ToQuery(t *testing.T) {
 	sinceDate, err := api.DateFromString("2020-02-02")
 	assert.NoError(t, err)
+	untilDate, err := api.DateFromString("2020-03-03")
+	assert.NoError(t, err)
 
 	var zeroDate api.Date
 
@@ -1328,6 +1330,10 @@ func TestFilter_ToQuery(t *testing.T) {
 		Input  transaction.Filter
 		Output string
 	}{
+		{
+			Input:  transaction.Filter{Since: &sinceDate, Until: &untilDate, Type: &unapprovedTransaction},
+			Output: "since_date=2020-02-02&type=unapproved&until_date=2020-03-03",
+		},
 		{
 			Input:  transaction.Filter{Since: &sinceDate, Type: &unapprovedTransaction},
 			Output: "since_date=2020-02-02&type=unapproved",
@@ -1341,11 +1347,15 @@ func TestFilter_ToQuery(t *testing.T) {
 			Output: "since_date=2020-02-02",
 		},
 		{
+			Input:  transaction.Filter{Until: &untilDate},
+			Output: "until_date=2020-03-03",
+		},
+		{
 			Input:  transaction.Filter{Type: &uncategorizedTransaction},
 			Output: "type=uncategorized",
 		},
 		{
-			Input:  transaction.Filter{Since: &zeroDate, Type: &uncategorizedTransaction},
+			Input:  transaction.Filter{Since: &zeroDate, Until: &zeroDate, Type: &uncategorizedTransaction},
 			Output: "type=uncategorized",
 		},
 		{
@@ -1368,6 +1378,7 @@ func TestService_GetTransactions_FilterQueryParameters(t *testing.T) {
 		func(req *http.Request) (*http.Response, error) {
 			// Verify that the query parameters are correctly included
 			assert.Equal(t, "2020-01-01", req.URL.Query().Get("since_date"))
+			assert.Equal(t, "2020-01-31", req.URL.Query().Get("until_date"))
 			assert.Equal(t, "unapproved", req.URL.Query().Get("type"))
 			assert.Equal(t, "12345", req.URL.Query().Get("last_knowledge_of_server"))
 
@@ -1384,12 +1395,15 @@ func TestService_GetTransactions_FilterQueryParameters(t *testing.T) {
 	client := ynab.NewClient("")
 	sinceDate, err := api.DateFromString("2020-01-01")
 	assert.NoError(t, err)
+	untilDate, err := api.DateFromString("2020-01-31")
+	assert.NoError(t, err)
 
 	unapprovedStatus := transaction.StatusUnapproved
 	serverKnowledge := uint64(12345)
 
 	f := &transaction.Filter{
 		Since:                 &sinceDate,
+		Until:                 &untilDate,
 		Type:                  &unapprovedStatus,
 		LastKnowledgeOfServer: &serverKnowledge,
 	}
