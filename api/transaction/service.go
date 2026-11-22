@@ -493,7 +493,10 @@ func (s *Service) DeleteScheduledTransaction(planID, scheduledTransactionID stri
 	return resModel.Data.ScheduledTransaction, nil
 }
 
-// ImportTransactions imports available transactions from all linked accounts for a plan
+// ImportTransactions is deprecated: YNAB now imports transactions on linked accounts
+// automatically, so no import is performed and the result contains no transaction ids.
+//
+// Deprecated: no longer needed.
 // https://api.ynab.com/v1#/Transactions/importTransactions
 func (s *Service) ImportTransactions(planID string) (*ImportResult, error) {
 	resModel := struct {

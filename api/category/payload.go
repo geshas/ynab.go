@@ -15,6 +15,8 @@ type PayloadCategory struct {
 	GoalTarget           *int64    `json:"goal_target,omitempty"`
 	GoalTargetDate       *api.Date `json:"goal_target_date,omitempty"`
 	GoalNeedsWholeAmount *bool     `json:"goal_needs_whole_amount,omitempty"`
+	// GoalFrequency is one of "monthly", "weekly" or "yearly"
+	GoalFrequency        *string `json:"goal_frequency,omitempty"`
 }
 
 // PayloadCreateCategory is the payload contract for creating a category
@@ -25,6 +27,8 @@ type PayloadCreateCategory struct {
 	GoalTarget           *int64    `json:"goal_target,omitempty"`
 	GoalTargetDate       *api.Date `json:"goal_target_date,omitempty"`
 	GoalNeedsWholeAmount *bool     `json:"goal_needs_whole_amount,omitempty"`
+	// GoalFrequency is one of "monthly", "weekly" or "yearly"
+	GoalFrequency        *string `json:"goal_frequency,omitempty"`
 }
 
 // PayloadCreateCategoryGroup is the payload contract for creating a category group
